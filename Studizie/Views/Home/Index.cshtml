@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Studizie.Models.Group>
+
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+
+<section class="hero">
+    <div class="container-fluid">
+
+        <p class="text-center">
+            Join existing groups that meet your needs or start by creating groups and invite your fellow students to join in
+        </p>
+
+        @*<button class="btn">Register</button>*@
+        @Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class="btn"})
+
+        @*<img src="~/Content/Images/studying.jpg" class="//img-responsive"/>*@
+    </div>
+</section>
+
+<section class="groups container">
+    <h2>Trending</h2>
+
+    <div class="row">
+
+        @foreach (var item in Model)
+        {
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="group">
+                    @if (item.GroupImage == null)   // Default image to show if no image was saved
+                    {
+                        <img src="~/Content/Images/Outside.jpg" />
+                    }
+                    else
+                    {
+                        <img src="~/Content/Images/@item.GroupImage" />
+                    }
+
+                    <textarea rows="1" readonly class="title">@item.Name</textarea>
+                    @*<p class="about">@item.About</p>*@
+                    <textarea rows="3" readonly class="about">@item.About</textarea>
+
+                    <div class="footer">
+                        <h6>@item.NumberOfMembers members | @item.GroupType group | @item.EntryType entry</h6>
+                    </div>
+                </div>
+            </div>
+
+        }
+
+    </div>
+
+</section>
+
+@section scripts{
+    @*<script>
+        var buttonState = $('.navbar-toggler');
+        console.log(buttonState);
+        if (buttonState.hasClass("collapsed"))
+            alert("show");
+        $(buttonState).button("toggle",function () {
+            $('.container-fluid').css("margin-top", "-220px");
+            alert("clicked");
+        });
+    </script>*@
+}

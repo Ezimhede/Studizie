@@ -1,0 +1,102 @@
+﻿@model Studizie.Models.Group
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>@Model.Name</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.About)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.About)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GroupType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GroupType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NumberOfMembers)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NumberOfMembers)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EntryType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EntryType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MeetingPoint)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MeetingPoint)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TimeOfMeeting)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TimeOfMeeting)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GroupCreator)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GroupCreator)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </dt>
+
+        <dd>
+            @Html.TextBoxFor(model => model.DateCreated, "{0:d MMM yyyy}", 
+            htmlAttributes: new {@disabled ="true", @class = "form-control"} )
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GroupImage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GroupImage)
+            <img src="" width="100" height="100" />
+        </dd>
+
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
