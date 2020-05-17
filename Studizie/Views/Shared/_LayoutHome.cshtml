@@ -3,13 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
-    @*@Styles.Render("~/Content/Site.css")*@
     @Scripts.Render("~/bundles/modernizr")
 
 </head>
-<body class="home">
+<body class="home register">
     <div class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             @Html.ActionLink("Studizie", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })

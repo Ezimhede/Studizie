@@ -49,6 +49,10 @@ dt {
     background-color: rgba(255,0,0,0);
 }
 
+.register .navbar {
+    background-color: #006FFF;
+}
+
 .home .navbar-brand {
     color: #C5FF00 !important;
     font-family: 'Pacifico',cursive;
@@ -68,13 +72,13 @@ dt {
     justify-content: right;
 }
 
-    .home .navbar-collapse ul:first-child {
-        margin-right: 200px;
-    }
+.home .navbar-collapse ul:first-child {
+    margin-right: 200px;
+}
 
-    .home .navbar-collapse a {
-        color: white !important;
-    }
+.home .navbar-collapse a {
+    color: white !important;
+}
 
 .home .navbar {
     border-bottom: 1px solid rgba(255, 255, 255, 0.47);
@@ -239,6 +243,10 @@ dt {
 
 /*Styles for Register view*/
 
+.register .navbar {
+    background-color: #006FFF;
+}
+
 .form-register {
     background-color: #E5F0FF;
     padding: 20px 50px;
@@ -281,3 +289,36 @@ dt {
 .form-register .form-group {
     margin-bottom: 2rem;
 }
+
+.form-register .btn-primary {
+    width: 100%;
+    max-width: 100%;
+}
+
+.form-register .row label {
+    border: 2px solid #006FFF;
+    border-radius: 2px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.custom-checkbox .custom-control-label::before {
+    border-radius: 2px;
+    border: 2px solid #006FFF;
+}
+
+.form-register .validation-summary-errors li {
+    width: 300px;
+}
+
+@media screen and (max-width: 576px) {
+    .form-register .row {
+        margin-bottom: 0 !important;
+    }
+    .custom-control-label {
+        margin-bottom: 10px !important;
+    }
+}
+
+
+

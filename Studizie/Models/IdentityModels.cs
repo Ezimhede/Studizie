@@ -53,5 +53,7 @@ namespace Studizie.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<Studizie.Models.ApplicationUser> ApplicationUsers { get; set; }
     }
 }

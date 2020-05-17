@@ -54,14 +54,21 @@
 </section>
 
 @section scripts{
-    @*<script>
-        var buttonState = $('.navbar-toggler');
-        console.log(buttonState);
-        if (buttonState.hasClass("collapsed"))
-            alert("show");
-        $(buttonState).button("toggle",function () {
-            $('.container-fluid').css("margin-top", "-220px");
-            alert("clicked");
+    <script>
+        //var buttonState = $('.navbar-toggler');
+        //console.log(buttonState);
+        //if (buttonState.hasClass("collapsed"))
+        //    alert("show");
+        //$(buttonState).button("toggle",function () {
+        //    $('.container-fluid').css("margin-top", "-220px");
+        //    alert("clicked");
+        //});
+
+        $(document).ready(function () {
+            // Remove register class from body, on home page
+            if ($('title').text() == "Home Page") {
+                $('body').removeClass("register");
+            }
         });
-    </script>*@
+    </script>
 }
