@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -10,6 +11,11 @@ namespace Studizie.Models
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit https://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
+        //public ApplicationUser()
+        //{
+        //    this.Groups = new HashSet<Group>();
+        //}
+
         [Required]
         public string FirstName { get; set; }
 
@@ -21,10 +27,12 @@ namespace Studizie.Models
         public bool IsEducation { get; set; }
         public bool IsSports { get; set; }
         public bool IsReligious { get; set; }
+
+        [Display(Name = "Skill Acquisition")]
         public bool IsSkillAcquisition { get; set; }
         public bool IsEntrepreneurship { get; set; }
         public bool IsGames { get; set; }
-
+        public ICollection<ApplicationUserGroup> ApplicationUserGroups { get; set; }
 
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
@@ -42,6 +50,10 @@ namespace Studizie.Models
         public DbSet<Group> Groups { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<Interest> Interests { get; set; }
+        public DbSet<GroupType> GroupTypes { get; set; }
+        public DbSet<EntryType> EntryTypes { get; set; }
+        public DbSet<ApplicationUserGroup> ApplicationUserGroups { get; set; }
+
 
 
         public ApplicationDbContext()
@@ -54,6 +66,6 @@ namespace Studizie.Models
             return new ApplicationDbContext();
         }
 
-        public System.Data.Entity.DbSet<Studizie.Models.ApplicationUser> ApplicationUsers { get; set; }
+        //public System.Data.Entity.DbSet<Studizie.Models.ApplicationUser> ApplicationUsers { get; set; }
     }
 }

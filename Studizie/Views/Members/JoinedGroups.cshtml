@@ -1,0 +1,201 @@
+﻿@model IEnumerable<Studizie.Models.Group>
+@using Microsoft.AspNet.Identity
+
+@{
+    ViewBag.Title = "Joined Groups";
+    Layout = "~/Views/Shared/_LayoutMembers.cshtml";
+}
+
+
+@*<div class="tabs container mt-4">
+        <nav class="nav nav-pills nav-fill">
+            @Html.ActionLink("All Groups", "Index", "Members", null, htmlAttributes: new { @class = "nav-item nav-link active" })
+            <a class="nav-item nav-link" href="#">Joined Groups</a>
+            <a class="nav-item nav-link" href="#">My Groups</a>
+        </nav>
+    </div>*@
+
+@*<section class="groups container">
+
+        <div class="row">
+
+            @foreach (var item in Model)
+            {
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <div class="group">
+
+                        @{
+                            var base64 = Convert.ToBase64String(item.GroupImage);
+                            var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+
+                            <img src="@imgSrc" />
+                        }
+
+                        <textarea rows="1" readonly class="title">@item.Name</textarea>
+                        <textarea rows="3" readonly class="about">@item.About</textarea>
+
+                        <p class="meeting" hidden>@item.MeetingPoint</p>
+                        <p class="time" hidden>@item.TimeOfMeeting</p>
+                        <p class="membersCount" hidden>@item.NumberOfMembers</p>
+                        <p class="groupType" hidden>@item.GroupTypes.Name</p>
+                        <p class="entryType" hidden>@item.EntryTypes.Name</p>
+                        <p class="creator" hidden>@item.GroupCreator</p>
+                        <p class="groupId" hidden>@item.Id</p>
+
+                        <div class="footer">
+                            <h6>@item.NumberOfMembers members | @item.GroupTypes.Name group | @item.EntryTypes.Name entry</h6>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+    </section>*@
+
+
+@*this section populates the ajax request values*@
+<section class="groups container">
+    @*<button class="btn btn-primary json">Generate Json</button>*@
+    <div class="fillJson row">
+    </div>
+</section>
+
+
+<!-- Modal -->
+<div class="modal fade" id="groupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <img class="headerImage" src="~/Content/Images/Outside.jpg" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    @*<span aria-hidden="true">&times;</span>*@
+                    <img src="~/Content/Images/Close.png" />
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <h3 class="title text-center"></h3>
+                <h6 class="about"></h6>
+                <p><span>Meeting Point:</span> <span class="meeting"></span></p>
+                <p><span>Time:</span> <span class="time"></span></p>
+
+                @using (Html.BeginForm("DeleteGroup", "Members", FormMethod.Post, new { onsubmit = "Submit()" }))
+                {
+                    @*@Html.Hidden("groupId", new { @class = "id" })*@
+                    <input id="groupId" name="groupId" type="hidden" value="" class="id">
+                    <input id="Id" name="Id" type="hidden" value="@User.Identity.GetUserId()">
+                    <button class="btn btn-block" type="submit">Exit Group</button>
+                }
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <h6><span class="membersCount"></span> members</h6> |
+                <h6><span class="groupType"></span> group</h6> |
+                <h6><span class="entryType"></span> entry</h6>
+            </div>
+            <p class="text-center">Group created by <span class="creator"></span></p>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+
+            //show an error message if user has already joined the group
+            var errorMessage = $('.error-message').text();
+            if (errorMessage == "You have already joined this group")
+                alert(errorMessage);
+
+            //Trigger the modal
+            $('.group').attr({ 'data-toggle': "modal", 'data-target': "#groupModal" });
+
+        });
+
+        $(window).on("load", function () {
+
+            // Get the groups a user has joined
+            var id = $('#Id').val();
+            console.log(id);
+
+            $.ajax({
+                url: '/members/jsongroups/' + id,
+                type: "Get",
+                dataType: "json",
+                contentType: "application/json",
+                success: function (data) {
+                    Output(data);
+                    PopulateModal();
+                }
+            });
+        });
+
+        function Output(data) {
+            console.log(data);
+
+            var details = '';
+
+            data.map(function (item, index, array) {
+
+                var src = "/members/renderimage?groupId=" + item.id;
+
+                details += '<div class="col-sm-6 col-md-4 col-lg-3">'
+                details += '<div class="group" data-toggle="modal" data-target="#groupModal">'
+                details += '<img class="avatar" src =' + src
+                details += '>'
+                details += '<textarea rows="1" readonly class="title">' + item.name + '</textarea>'
+                details += '<textarea rows="3" readonly class="about">' + item.about + '</textarea >'
+
+                details += '<p class="meeting" hidden >' + item.meetingPoint + '</p >'
+                details += '<p class="time" hidden>' + item.timeOfMeeting + '</p>'
+                details += '<p class="membersCount" hidden>' + item.numberOfMembers + '</p>'
+                details += '<p class="groupType" hidden>' + item.groupType.Name + '</p>'
+                details += '<p class="entryType" hidden>' + item.entryType.Name + '</p>'
+                details += '<p class="creator" hidden>' + item.groupCreator + '</p>'
+                details += '<p class="groupId" hidden>' + item.Id + '</p>'
+
+                details += '<div class="footer">'
+                details += '<h6>' + item.numberOfMembers + 'members |' + item.groupType.Name + 'group | ' + item.entryType.Name + 'entry' + '</h6>'
+                details += '</div>'
+
+                details += '</div>'
+                details += '</div>'
+
+                $('.fillJson').html(details);
+
+            });
+        }
+
+        //Get clicked group contents and set it as modal contents
+        function PopulateModal() {
+
+            $('.group').click(function () {
+
+                var imgSrc = $(this).find('img').attr("src");
+                var title = $(this).find('.title').text();
+                var about = $(this).find('.about').text();
+                var meeting = $(this).find('.meeting').text();
+                var time = $(this).find('.time').text();
+                var membersCount = $(this).find('.membersCount').text();
+                var groupType = $(this).find('.groupType').text();
+                var entryType = $(this).find('.entryType').text();
+                var creator = $(this).find('.creator').text();
+                var groupId = $(this).find('.groupId').text();
+
+                $('.modal-header .headerImage').attr("src", imgSrc);
+                $('.modal-body .title').html(title);
+                $('.modal-body .about').html(about);
+                $('.modal-body .meeting').html(meeting);
+                $('.modal-body .time').html(time);
+                $('.modal-footer .membersCount').html(membersCount);
+                $('.modal-footer .groupType').html(groupType);
+                $('.modal-footer .entryType').html(entryType);
+                $('.modal-content .creator').html(creator);
+                $('.modal-content .id').val(groupId);
+
+            });
+        };
+
+    </script>
+}

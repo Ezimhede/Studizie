@@ -1,18 +1,586 @@
-﻿@model Studizie.Models.ApplicationUser
+﻿@model Studizie.ViewModels.MembersViewModel
+@using Microsoft.AspNet.Identity
 
 @{
-    Layout = null;
+    ViewBag.Title = "MembersHome";
+    Layout = "~/Views/Shared/_LayoutMembers.cshtml";
 }
 
-<!DOCTYPE html>
+<h4 class="error-message" hidden>@ViewBag.message</h4>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>MembersHome</title>
-</head>
-<body>
-    <div> 
+@functions
+{
+}
+
+@*Navigation bar*@
+<div class="tabs container mt-4">
+    <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="pills-all-tab" href="#pills-all" data-toggle="pill" role="tab" aria-controls="pills-all" aria-selected="true">All Groups</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-joined-tab" href="#pills-joined" data-toggle="pill" role="tab" aria-controls="pills-joined" aria-selected="false">Joined Groups</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-contact-tab" data-toggle="pill" role="tab" aria-controls="pills-contact" aria-selected="false">My Groups</a>
+        </li>
+    </ul>
+</div>
+
+@*this section populates the ajax request values*@
+<div class="tab-content" id="pills-tabContent">
+    <div class="groups container tab-pane fade show active" id="pills-all" role="tabpanel" aria-labelledby="pills-all-tab">
+        <div id="science">
+            <h3 class='mb-4' hidden>Science</h3>
+            <div class="science"></div>
+        </div>
+        <div id="arts">
+            <h3 class='mb-4' hidden>Arts</h3>
+            <div class="arts"></div>
+        </div>
+        <div id="tech">
+            <h3 class='mb-4' hidden>Technology</h3>
+            <div class="tech"></div>
+        </div>
+        <div id="edu">
+            <h3 class='mb-4' hidden>Education</h3>
+            <div class="edu"></div>
+        </div>
+        <div id="sport">
+            <h3 class='mb-4' hidden>Sport</h3>
+            <div class="sport"></div>
+        </div>
+        <div id="rel">
+            <h3 class='mb-4' hidden>Religious</h3>
+            <div class="rel"></div>
+        </div>
+        <div id="skill">
+            <h3 class='mb-4' hidden>Skill Acquisition</h3>
+            <div class="skill"></div>
+        </div>
+        <div id="entre">
+            <h3 class='mb-4' hidden>Entrepreneurship</h3>
+            <div class="entre"></div>
+        </div>
+        <div id="games">
+            <h3 class='mb-4' hidden>Games</h3>
+            <div class="games"></div>
+        </div>
     </div>
-</body>
-</html>
+
+    <div class="groups container tab-pane fade" id="pills-joined" role="tabpanel" aria-labelledby="pills-joined-tab">
+        <div class="joined"></div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="groupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <img class="headerImage" src="~/Content/Images/Outside.jpg" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    @*<span aria-hidden="true">&times;</span>*@
+                    <img src="~/Content/Images/Close.png" />
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <h3 class="title text-center">asd</h3>
+                <h6 class="about">sdfd</h6>
+                <p><span>Meeting Point:</span> <span class="meeting"></span></p>
+                <p><span>Time:</span> <span class="time"></span></p>
+
+                @using (Html.BeginForm("JoinGroup", "Members", FormMethod.Post, new { onsubmit = "Submit()" }))
+                {
+                    @Html.HiddenFor(m => m.Users.Id)
+                    @*@Html.Hidden("groupId", new { @class = "id" })*@
+                    <input id="groupId" name="groupId" type="hidden" value="" class="id">
+                    <input id="Id" name="Id" type="hidden" value="@User.Identity.GetUserId()">
+                    <button class="btn btn-block" type="submit">Join Group</button>
+                }
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <h6><span class="membersCount"></span> members</h6> |
+                <h6><span class="groupType"></span> group</h6> |
+                <h6><span class="entryType"></span> entry</h6>
+            </div>
+            <p class="text-center">Group created by <span class="creator"></span></p>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+
+        //fetch all request when window loads
+        $(window).on("load", function () {
+
+            var id = $('#Id').val();
+            console.log(id);
+
+            $.when(
+                // Get all available groups
+                $.ajax({
+                    url: '/members/jsonindex/',
+                    type: "Get",
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (data) {
+                        allGroups = data;
+                        //PopulateModal();
+                    }
+                }),
+
+                //get groups a member has joined
+                $.ajax({
+                    url: '/members/joinedgroups/' + id,
+                    type: "Get",
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (data) {
+                        console.log(data);
+                        joinedGroups = data;
+                        //PopulateModal();
+                    }
+                })
+
+            ).then(function () {
+
+                AllGroups(allGroups);
+                PopulateModal();
+
+                JoinedGroups(joinedGroups);
+                PopulateModal();
+            });
+
+
+        });
+
+        //Populate the Joined Groups tab
+        function JoinedGroups(data) {
+
+            var details = '';
+
+            data.map(function (item, index, array) {
+
+                var src = "/members/renderimage?groupId=" + item.Id;
+
+                details += '<div class="col-sm-6 col-md-4 col-lg-3">'
+                details += '<div class="group" data-toggle="modal" data-target="#groupModal">'
+                details += '<img class="avatar" src =' + src
+                details += '>'
+                details += '<textarea rows="1" readonly class="title">' + item.Name + '</textarea>'
+                details += '<textarea rows="3" readonly class="about">' + item.About + '</textarea >'
+
+                details += '<p class="meeting" hidden >' + item.MeetingPoint + '</p >'
+                details += '<p class="time" hidden>' + item.TimeOfMeeting + '</p>'
+                details += '<p class="membersCount" hidden>' + item.NumberOfMembers + '</p>'
+                details += '<p class="groupType" hidden>' + item.GroupTypes.Name + '</p>'
+                details += '<p class="entryType" hidden>' + item.EntryTypes.Name + '</p>'
+                details += '<p class="creator" hidden>' + item.GroupCreator + '</p>'
+                details += '<p class="groupId" hidden>' + item.Id + '</p>'
+
+                details += '<div class="footer">'
+                details += '<h6>' + item.NumberOfMembers + ' members |' + item.GroupTypes.Name + ' group | ' + item.EntryTypes.Name + ' entry' + '</h6>'
+                details += '</div>'
+
+                details += '</div>'
+                details += '</div>'
+
+                $('.joined').html(details);
+            });
+
+            $('.joined .col-sm-6').wrapAll("<div class='row'></div>");
+        };
+
+        //Populate the All Groups tab
+        function AllGroups(data) {
+
+            if (data.Users.IsScience) {
+                
+                var details = '';
+
+                for (var item of data.Groups) {
+                    if (item.Interests.Name == "Science") {
+
+                        //console.log(item);
+                        var src = "/members/renderimage?groupId=" + item.Id;
+
+                        details += '<div class="col-sm-6 col-md-4 col-lg-3">'
+                        details += '<div class="group" data-toggle="modal" data-target="#groupModal">'
+                        details += '<img class="avatar" src =' + src
+                        details += '>'
+                        details += '<textarea rows="1" readonly class="title">' + item.Name + '</textarea>'
+                        details += '<textarea rows="3" readonly class="about">' + item.About + '</textarea >'
+
+                        details += '<p class="meeting" hidden >' + item.MeetingPoint + '</p >'
+                        details += '<p class="time" hidden>' + item.TimeOfMeeting + '</p>'
+                        details += '<p class="membersCount" hidden>' + item.NumberOfMembers + '</p>'
+                        details += '<p class="groupType" hidden>' + item.GroupTypes.Name + '</p>'
+                        details += '<p class="entryType" hidden>' + item.EntryTypes.Name + '</p>'
+                        details += '<p class="creator" hidden>' + item.GroupCreator + '</p>'
+                        details += '<p class="groupId" hidden>' + item.Id + '</p>'
+
+                        details += '<div class="footer">'
+                        details += '<h6>' + item.NumberOfMembers + ' members |' + item.GroupTypes.Name + ' group | ' + item.EntryTypes.Name + ' entry' + '</h6>'
+                        details += '</div>'
+
+                        details += '</div>'
+                        details += '</div>'
+
+                        $('.science').html(details);
+                        $('.Science .col-sm-6').wrapAll("<div class='row'></div>");
+                        $('#Science h3').removeAttr("hidden");
+                    };
+                };
+            };
+
+            if (data.Users.IsArts) {
+                
+                var details = '';
+
+                for (var item of data.Groups) {
+                    if (item.Interests.Name == "Arts") {
+
+                        var src = "/members/renderimage?groupId=" + item.Id;
+
+                        details += '<div class="col-sm-6 col-md-4 col-lg-3">'
+                        details += '<div class="group" data-toggle="modal" data-target="#groupModal">'
+                        details += '<img class="avatar" src =' + src
+                        details += '>'
+                        details += '<textarea rows="1" readonly class="title">' + item.Name + '</textarea>'
+                        details += '<textarea rows="3" readonly class="about">' + item.About + '</textarea >'
+
+                        details += '<p class="meeting" hidden >' + item.MeetingPoint + '</p >'
+                        details += '<p class="time" hidden>' + item.TimeOfMeeting + '</p>'
+                        details += '<p class="membersCount" hidden>' + item.NumberOfMembers + '</p>'
+                        details += '<p class="groupType" hidden>' + item.GroupTypes.Name + '</p>'
+                        details += '<p class="entryType" hidden>' + item.EntryTypes.Name + '</p>'
+                        details += '<p class="creator" hidden>' + item.GroupCreator + '</p>'
+                        details += '<p class="groupId" hidden>' + item.Id + '</p>'
+
+                        details += '<div class="footer">'
+                        details += '<h6>' + item.NumberOfMembers + ' members |' + item.GroupTypes.Name + ' group | ' + item.EntryTypes.Name + ' entry' + '</h6>'
+                        details += '</div>'
+
+                        details += '</div>'
+                        details += '</div>'
+
+                        $('.arts').html(details);
+                        $('.arts .col-sm-6').wrapAll("<div class='row'></div>");
+                        $('#arts h3').removeAttr("hidden");
+                    };
+                };
+            };
+
+            if (data.Users.IsTechnology) {
+                
+                var details = '';
+
+                for (var item of data.Groups) {
+                    if (item.Interests.Name == "Technology") {
+
+                        var src = "/members/renderimage?groupId=" + item.Id;
+
+                        details += '<div class="col-sm-6 col-md-4 col-lg-3">'
+                        details += '<div class="group" data-toggle="modal" data-target="#groupModal">'
+                        details += '<img class="avatar" src =' + src
+                        details += '>'
+                        details += '<textarea rows="1" readonly class="title">' + item.Name + '</textarea>'
+                        details += '<textarea rows="3" readonly class="about">' + item.About + '</textarea >'
+
+                        details += '<p class="meeting" hidden >' + item.MeetingPoint + '</p >'
+                        details += '<p class="time" hidden>' + item.TimeOfMeeting + '</p>'
+                        details += '<p class="membersCount" hidden>' + item.NumberOfMembers + '</p>'
+                        details += '<p class="groupType" hidden>' + item.GroupTypes.Name + '</p>'
+                        details += '<p class="entryType" hidden>' + item.EntryTypes.Name + '</p>'
+                        details += '<p class="creator" hidden>' + item.GroupCreator + '</p>'
+                        details += '<p class="groupId" hidden>' + item.Id + '</p>'
+
+                        details += '<div class="footer">'
+                        details += '<h6>' + item.NumberOfMembers + ' members |' + item.GroupTypes.Name + ' group | ' + item.EntryTypes.Name + ' entry' + '</h6>'
+                        details += '</div>'
+
+                        details += '</div>'
+                        details += '</div>'
+
+                        $('.tech').html(details);
+                        $('.tech .col-sm-6').wrapAll("<div class='row'></div>");
+                        $('#tech h3').removeAttr("hidden");
+                    };
+                };
+            };
+
+            if (data.Users.IsEducation) {
+                
+                var details = '';
+
+                for (var item of data.Groups) {
+                    if (item.Interests.Name == "Education") {
+
+                        //console.log(item);
+                        var src = "/members/renderimage?groupId=" + item.Id;
+
+                        details += '<div class="col-sm-6 col-md-4 col-lg-3">'
+                        details += '<div class="group" data-toggle="modal" data-target="#groupModal">'
+                        details += '<img class="avatar" src =' + src
+                        details += '>'
+                        details += '<textarea rows="1" readonly class="title">' + item.Name + '</textarea>'
+                        details += '<textarea rows="3" readonly class="about">' + item.About + '</textarea >'
+
+                        details += '<p class="meeting" hidden >' + item.MeetingPoint + '</p >'
+                        details += '<p class="time" hidden>' + item.TimeOfMeeting + '</p>'
+                        details += '<p class="membersCount" hidden>' + item.NumberOfMembers + '</p>'
+                        details += '<p class="groupType" hidden>' + item.GroupTypes.Name + '</p>'
+                        details += '<p class="entryType" hidden>' + item.EntryTypes.Name + '</p>'
+                        details += '<p class="creator" hidden>' + item.GroupCreator + '</p>'
+                        details += '<p class="groupId" hidden>' + item.Id + '</p>'
+
+                        details += '<div class="footer">'
+                        details += '<h6>' + item.NumberOfMembers + ' members |' + item.GroupTypes.Name + ' group | ' + item.EntryTypes.Name + ' entry' + '</h6>'
+                        details += '</div>'
+
+                        details += '</div>'
+                        details += '</div>'
+
+                        $('.edu').html(details);
+                        $('.edu .col-sm-6').wrapAll("<div class='row'></div>");
+                        $('#edu h3').removeAttr("hidden");
+                    };
+                    //$(".edu").prepend("<h3 class='mb-4'>Education</h3>");
+                };
+            };
+
+            if (data.Users.IsSports) {
+                //debugger; // use this to debug javascript in the browser
+                //$(".groups").prepend("<div class='sports'></div>");
+                //$(".groups .sports").prepend("<h3 class='mb-4'>Sports</h3>");
+                //$(".groups .sports").append("<div class='row'></div>");
+
+                var details = '';
+
+                for (var item of data.Groups) {
+                    if (item.Interests.Name == "Sports") {
+
+                        //console.log(item);
+                        var src = "/members/renderimage?groupId=" + item.Id;
+
+                        details += '<div class="col-sm-6 col-md-4 col-lg-3">'
+                        details += '<div class="group" data-toggle="modal" data-target="#groupModal">'
+                        details += '<img class="avatar" src =' + src
+                        details += '>'
+                        details += '<textarea rows="1" readonly class="title">' + item.Name + '</textarea>'
+                        details += '<textarea rows="3" readonly class="about">' + item.About + '</textarea >'
+
+                        details += '<p class="meeting" hidden >' + item.MeetingPoint + '</p >'
+                        details += '<p class="time" hidden>' + item.TimeOfMeeting + '</p>'
+                        details += '<p class="membersCount" hidden>' + item.NumberOfMembers + '</p>'
+                        details += '<p class="groupType" hidden>' + item.GroupTypes.Name + '</p>'
+                        details += '<p class="entryType" hidden>' + item.EntryTypes.Name + '</p>'
+                        details += '<p class="creator" hidden>' + item.GroupCreator + '</p>'
+                        details += '<p class="groupId" hidden>' + item.Id + '</p>'
+
+                        details += '<div class="footer">'
+                        details += '<h6>' + item.NumberOfMembers + ' members |' + item.GroupTypes.Name + ' group | ' + item.EntryTypes.Name + ' entry' + '</h6>'
+                        details += '</div>'
+
+                        details += '</div>'
+                        details += '</div>'
+
+                        $('.sport').html(details);
+                        $('.sport .col-sm-6').wrapAll("<div class='row'></div>");
+                        $('#sport h3').removeAttr("hidden");
+                    };
+                };
+            };
+
+            if (data.Users.IsReligious) {
+                
+                var details = '';
+
+                for (var item of data.Groups) {
+                    if (item.Interests.Name == "Religious") {
+
+                        var src = "/members/renderimage?groupId=" + item.Id;
+
+                        details += '<div class="col-sm-6 col-md-4 col-lg-3">'
+                        details += '<div class="group" data-toggle="modal" data-target="#groupModal">'
+                        details += '<img class="avatar" src =' + src
+                        details += '>'
+                        details += '<textarea rows="1" readonly class="title">' + item.Name + '</textarea>'
+                        details += '<textarea rows="3" readonly class="about">' + item.About + '</textarea >'
+
+                        details += '<p class="meeting" hidden >' + item.MeetingPoint + '</p >'
+                        details += '<p class="time" hidden>' + item.TimeOfMeeting + '</p>'
+                        details += '<p class="membersCount" hidden>' + item.NumberOfMembers + '</p>'
+                        details += '<p class="groupType" hidden>' + item.GroupTypes.Name + '</p>'
+                        details += '<p class="entryType" hidden>' + item.EntryTypes.Name + '</p>'
+                        details += '<p class="creator" hidden>' + item.GroupCreator + '</p>'
+                        details += '<p class="groupId" hidden>' + item.Id + '</p>'
+
+                        details += '<div class="footer">'
+                        details += '<h6>' + item.NumberOfMembers + ' members |' + item.GroupTypes.Name + ' group | ' + item.EntryTypes.Name + ' entry' + '</h6>'
+                        details += '</div>'
+
+                        details += '</div>'
+                        details += '</div>'
+
+                        $('.rel').html(details);
+                        $('.rel .col-sm-6').wrapAll("<div class='row'></div>");
+                        $('#rel h3').removeAttr("hidden");
+                    };
+                };
+            };
+
+            if (data.Users.IsSkillAcquisition) {
+                
+                var details = '';
+
+                for (var item of data.Groups) {
+                    if (item.Interests.Name == "SkillAcquisition") {
+
+                        var src = "/members/renderimage?groupId=" + item.Id;
+
+                        details += '<div class="col-sm-6 col-md-4 col-lg-3">'
+                        details += '<div class="group" data-toggle="modal" data-target="#groupModal">'
+                        details += '<img class="avatar" src =' + src
+                        details += '>'
+                        details += '<textarea rows="1" readonly class="title">' + item.Name + '</textarea>'
+                        details += '<textarea rows="3" readonly class="about">' + item.About + '</textarea >'
+
+                        details += '<p class="meeting" hidden >' + item.MeetingPoint + '</p >'
+                        details += '<p class="time" hidden>' + item.TimeOfMeeting + '</p>'
+                        details += '<p class="membersCount" hidden>' + item.NumberOfMembers + '</p>'
+                        details += '<p class="groupType" hidden>' + item.GroupTypes.Name + '</p>'
+                        details += '<p class="entryType" hidden>' + item.EntryTypes.Name + '</p>'
+                        details += '<p class="creator" hidden>' + item.GroupCreator + '</p>'
+                        details += '<p class="groupId" hidden>' + item.Id + '</p>'
+
+                        details += '<div class="footer">'
+                        details += '<h6>' + item.NumberOfMembers + ' members |' + item.GroupTypes.Name + ' group | ' + item.EntryTypes.Name + ' entry' + '</h6>'
+                        details += '</div>'
+
+                        details += '</div>'
+                        details += '</div>'
+
+                        $('.skill').html(details);
+                        $('.skill .col-sm-6').wrapAll("<div class='row'></div>");
+                        $('#skill h3').removeAttr("hidden");
+                    };
+                };
+            };
+
+            if (data.Users.IsEntrepreneurship) {
+                
+                var details = '';
+
+                for (var item of data.Groups) {
+                    if (item.Interests.Name == "Entrepreneurship") {
+
+                        var src = "/members/renderimage?groupId=" + item.Id;
+
+                        details += '<div class="col-sm-6 col-md-4 col-lg-3">'
+                        details += '<div class="group" data-toggle="modal" data-target="#groupModal">'
+                        details += '<img class="avatar" src =' + src
+                        details += '>'
+                        details += '<textarea rows="1" readonly class="title">' + item.Name + '</textarea>'
+                        details += '<textarea rows="3" readonly class="about">' + item.About + '</textarea >'
+
+                        details += '<p class="meeting" hidden >' + item.MeetingPoint + '</p >'
+                        details += '<p class="time" hidden>' + item.TimeOfMeeting + '</p>'
+                        details += '<p class="membersCount" hidden>' + item.NumberOfMembers + '</p>'
+                        details += '<p class="groupType" hidden>' + item.GroupTypes.Name + '</p>'
+                        details += '<p class="entryType" hidden>' + item.EntryTypes.Name + '</p>'
+                        details += '<p class="creator" hidden>' + item.GroupCreator + '</p>'
+                        details += '<p class="groupId" hidden>' + item.Id + '</p>'
+
+                        details += '<div class="footer">'
+                        details += '<h6>' + item.NumberOfMembers + ' members |' + item.GroupTypes.Name + ' group | ' + item.EntryTypes.Name + ' entry' + '</h6>'
+                        details += '</div>'
+
+                        details += '</div>'
+                        details += '</div>'
+
+                        $('.entre').html(details);
+                        $('.entre .col-sm-6').wrapAll("<div class='row'></div>");
+                        $('#entre h3').removeAttr("hidden");
+                    };
+                };
+            };
+
+            if (data.Users.IsGames) {
+                
+                var details = '';
+
+                for (var item of data.Groups) {
+                    if (item.Interests.Name == "Video Games") {
+
+                        var src = "/members/renderimage?groupId=" + item.Id;
+
+                        details += '<div class="col-sm-6 col-md-4 col-lg-3">'
+                        details += '<div class="group" data-toggle="modal" data-target="#groupModal">'
+                        details += '<img class="avatar" src =' + src
+                        details += '>'
+                        details += '<textarea rows="1" readonly class="title">' + item.Name + '</textarea>'
+                        details += '<textarea rows="3" readonly class="about">' + item.About + '</textarea >'
+
+                        details += '<p class="meeting" hidden >' + item.MeetingPoint + '</p >'
+                        details += '<p class="time" hidden>' + item.TimeOfMeeting + '</p>'
+                        details += '<p class="membersCount" hidden>' + item.NumberOfMembers + '</p>'
+                        details += '<p class="groupType" hidden>' + item.GroupTypes.Name + '</p>'
+                        details += '<p class="entryType" hidden>' + item.EntryTypes.Name + '</p>'
+                        details += '<p class="creator" hidden>' + item.GroupCreator + '</p>'
+                        details += '<p class="groupId" hidden>' + item.Id + '</p>'
+
+                        details += '<div class="footer">'
+                        details += '<h6>' + item.NumberOfMembers + ' members |' + item.GroupTypes.Name + ' group | ' + item.EntryTypes.Name + ' entry' + '</h6>'
+                        details += '</div>'
+
+                        details += '</div>'
+                        details += '</div>'
+
+                        $('.games').html(details);
+                        $('.games .col-sm-6').wrapAll("<div class='row'></div>");
+                        $('#games h3').removeAttr("hidden");
+                    };
+                };
+            };
+            
+        };
+
+        //Get clicked group contents and set it as modal contents
+        function PopulateModal() {
+
+            $('.group').click(function () {
+
+                var imgSrc = $(this).find('img').attr("src");
+                var title = $(this).find('.title').text();
+                var about = $(this).find('.about').text();
+                var meeting = $(this).find('.meeting').text();
+                var time = $(this).find('.time').text();
+                var membersCount = $(this).find('.membersCount').text();
+                var groupType = $(this).find('.groupType').text();
+                var entryType = $(this).find('.entryType').text();
+                var creator = $(this).find('.creator').text();
+                var groupId = $(this).find('.groupId').text();
+
+                $('.modal-header .headerImage').attr("src", imgSrc);
+                $('.modal-body .title').html(title);
+                $('.modal-body .about').html(about);
+                $('.modal-body .meeting').html(meeting);
+                $('.modal-body .time').html(time);
+                $('.modal-footer .membersCount').html(membersCount);
+                $('.modal-footer .groupType').html(groupType);
+                $('.modal-footer .entryType').html(entryType);
+                $('.modal-content .creator').html(creator);
+                $('.modal-content .id').val(groupId);
+
+            });
+        };
+
+    </script>
+}

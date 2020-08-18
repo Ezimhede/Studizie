@@ -5,10 +5,56 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+@{
+    int counted = 0;
 
-<div>
-    <h4>@Model.Name</h4>
+    var base64 = Convert.ToBase64String(Model.GroupImage);
+
+    var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+}
+
+@*Get the number of members for the selected group*@
+@switch (Model.Interests.Name)
+{
+    case "Science":
+        counted = ViewBag.scienceCount;
+        break;
+
+    case "Arts":
+        counted = ViewBag.artsCount;
+        break;
+
+    case "Technology":
+        counted = ViewBag.technologyCount;
+        break;
+
+    case "Education":
+        counted = ViewBag.educationCount;
+        break;
+
+    case "Sports":
+        counted = ViewBag.sportsCount;
+        break;
+
+    case "Religious":
+        counted = ViewBag.religiousCount;
+        break;
+
+    case "Skill Acquisition":
+        counted = ViewBag.skillAcquisitionCount;
+        break;
+
+    case "Entrepreneurship":
+        counted = ViewBag.entrepreneurshipCount;
+        break;
+
+    case "Video Games":
+        counted = ViewBag.gamesCount;
+        break;
+}
+
+<div class="details">
+    <h4 class="mt-5">@Model.Name</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -24,15 +70,8 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.About)
-        </dd>
+            @Html.TextAreaFor(model => model.About, 0, 100, htmlAttributes: new { @class = "", @readonly = "true" })
 
-        <dt>
-            @Html.DisplayNameFor(model => model.GroupType)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.GroupType)
         </dd>
 
         <dt>
@@ -40,15 +79,31 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.NumberOfMembers)
+            @counted
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.EntryType)
+            @Html.DisplayNameFor(model => model.GroupTypes)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.EntryType)
+            @Html.DisplayFor(model => model.GroupTypes.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EntryTypes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EntryTypes.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayName("Category")
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Interests.Name)
         </dd>
 
         <dt>
@@ -80,8 +135,8 @@
         </dt>
 
         <dd>
-            @Html.TextBoxFor(model => model.DateCreated, "{0:d MMM yyyy}", 
-            htmlAttributes: new {@disabled ="true", @class = "form-control"} )
+            @Html.TextBoxFor(model => model.DateCreated, "{0:d MMM yyyy}",
+            htmlAttributes: new { @disabled = "true", @class = "form-control" })
         </dd>
 
         <dt>
@@ -89,8 +144,8 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.GroupImage)
-            <img src="" width="100" height="100" />
+            @*@Html.DisplayFor(model => model.GroupImage)*@
+            <img src="@imgSrc" width="100" height="100" />
         </dd>
 
 

@@ -1,4 +1,5 @@
 ﻿using Studizie.Models;
+using Studizie.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -40,19 +41,27 @@ namespace Studizie.Controllers
         // Create Groups
         public ActionResult Create()
         {
-            return View();
+            var viewModel = new CreateViewModel()
+            {
+                Groups = new Group(),
+                Interests = _context.Interests.ToList(),
+                GroupTypes = _context.GroupTypes.ToList(),
+                EntryTypes = _context.EntryTypes.ToList()
+            };
+
+            return View(viewModel);
         }
 
         // POST Groups/Create
         // Save created or edited groups
         [HttpPost]
-        public ActionResult Save(Group group, HttpPostedFileBase image)
+        public ActionResult Save(CreateViewModel group, HttpPostedFileBase File)
         {
-          
-            if (!ModelState.IsValid)
-                return View("Create", group);
 
-            if (group.Id == 0)  // New group
+            if (!ModelState.IsValid)
+                return View("Edit", group);
+
+            if (group.Groups.Id == 0)  // New group
             {
                 // Saving uploaded image to folder
 
@@ -64,24 +73,38 @@ namespace Studizie.Controllers
                 //image.SaveAs(fileNamePath);
 
                 //group.GroupImage = fileName;
-                group.DateCreated = DateTime.Now;
+                group.Groups.DateCreated = DateTime.Now;
 
-                _context.Groups.Add(group);
+                using (var binaryReader = new BinaryReader(File.InputStream)) //convert image to binary and save
+                    group.Groups.GroupImage = binaryReader.ReadBytes(File.ContentLength);
+
+                _context.Groups.Add(group.Groups);
             }
 
             // For editing existing group
             else
             {
-                var groupInDb = _context.Groups.SingleOrDefault(g => g.Id == group.Id);
+                var groupInDb = _context.Groups.SingleOrDefault(g => g.Id == group.Groups.Id);
 
-                groupInDb.Name = group.Name;
-                groupInDb.About = group.About;
-                groupInDb.MeetingPoint = group.MeetingPoint;
-                groupInDb.TimeOfMeeting = group.TimeOfMeeting;
-                groupInDb.GroupCreator = group.GroupCreator;
-                groupInDb.GroupType = group.GroupType;
-                groupInDb.EntryType = group.EntryType;
-                groupInDb.GroupImage = group.GroupImage;
+                if (File == null)
+                    groupInDb.GroupImage = groupInDb.GroupImage;
+
+                if (File != null)
+                {
+                    using (var binaryReader = new BinaryReader(File.InputStream)) //convert image to binary and save
+                    groupInDb.GroupImage = binaryReader.ReadBytes(File.ContentLength);
+                }
+
+                groupInDb.Name = group.Groups.Name;
+                groupInDb.About = group.Groups.About;
+                groupInDb.MeetingPoint = group.Groups.MeetingPoint;
+                groupInDb.TimeOfMeeting = group.Groups.TimeOfMeeting;
+                groupInDb.GroupCreator = group.Groups.GroupCreator;
+                groupInDb.GroupTypesId = group.Groups.GroupTypesId;
+                groupInDb.EntryTypesId = group.Groups.EntryTypesId;
+                groupInDb.InterestsId = group.Groups.InterestsId;
+                //group.Groups.GroupImage = new byte[File.ContentLength];
+                //File.InputStream.Read(group.Groups.GroupImage, 0, File.ContentLength);
             }
 
             _context.SaveChanges();
@@ -89,18 +112,38 @@ namespace Studizie.Controllers
             return RedirectToAction("Index");
         }
 
-        // Edit view:  Groups/edit
+        // GET: Edit view:  Groups/edit
         public ActionResult Edit(int id)
         {
-            var group = _context.Groups.SingleOrDefault(i => i.Id == id);
+            var viewModel = new CreateViewModel()
+            {
+                Groups = _context.Groups.SingleOrDefault(i => i.Id == id),
+                Interests = _context.Interests.ToList(),
+                GroupTypes = _context.GroupTypes.ToList(),
+                EntryTypes = _context.EntryTypes.ToList()
+            };
 
-            return View(group);
+            //var group = _context.Groups.SingleOrDefault(i => i.Id == id);
+
+            return View(viewModel);
         }
 
         // Details: Groups/details/1
         public ActionResult Details(int id)
         {
-            var group = _context.Groups.SingleOrDefault(g => g.Id == id);
+            var group = _context.Groups.Include(s => s.Interests)
+                .Include(s => s.GroupTypes).Include(s => s.EntryTypes).SingleOrDefault(g => g.Id == id);
+
+            // Get the number of members for each category
+            ViewBag.scienceCount = _context.Users.Count(s => s.IsScience);
+            ViewBag.artsCount = _context.Users.Count(s => s.IsArts);
+            ViewBag.technologyCount = _context.Users.Count(s => s.IsTechnology);
+            ViewBag.educationCount = _context.Users.Count(s => s.IsEducation);
+            ViewBag.sportsCount = _context.Users.Count(s => s.IsSports);
+            ViewBag.religiousCount = _context.Users.Count(s => s.IsReligious);
+            ViewBag.skillAcquisitionCount = _context.Users.Count(s => s.IsSkillAcquisition);
+            ViewBag.entrepreneurshipCount = _context.Users.Count(s => s.IsEntrepreneurship);
+            ViewBag.gamesCount = _context.Users.Count(s => s.IsGames);
 
             return View(group);
         }

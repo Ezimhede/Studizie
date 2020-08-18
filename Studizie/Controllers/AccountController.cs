@@ -66,7 +66,7 @@ namespace Studizie.Controllers
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
@@ -80,7 +80,8 @@ namespace Studizie.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    //return RedirectToLocal(returnUrl);
+                    return RedirectToAction("Index", "Members");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -172,11 +173,11 @@ namespace Studizie.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    // For creating new role and adding user to the new role
-                    //var roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
-                    //var roleManager = new RoleManager<IdentityRole>(roleStore);
-                    //await roleManager.CreateAsync(new IdentityRole("CanManageGroups"));
-                    //await UserManager.AddToRoleAsync(user.Id, "CanManageGroups");
+                    //For creating new role and adding user to the new role
+                    var roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
+                    var roleManager = new RoleManager<IdentityRole>(roleStore);
+                    await roleManager.CreateAsync(new IdentityRole("Member"));
+                    await UserManager.AddToRoleAsync(user.Id, "Member");
 
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     

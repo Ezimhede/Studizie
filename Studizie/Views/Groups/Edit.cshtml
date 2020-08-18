@@ -1,11 +1,17 @@
-﻿@model Studizie.Models.Group
+﻿@model Studizie.ViewModels.CreateViewModel
 
 @{
-    ViewBag.Title = "Create a group";
+    ViewBag.Title = "Edit Group";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Create a Group</h2>
+@{
+    var base64 = Convert.ToBase64String(Model.Groups.GroupImage);
+
+    var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+}
+
+<h2 class="mt-5">Edit Group</h2>
 
 @using (Html.BeginForm("Save", "Groups", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
@@ -15,97 +21,105 @@
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Groups.Name, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.Groups.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Groups.Name, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.About, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Groups.About, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextAreaFor(model => model.About, 5, 20, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.About, "", new { @class = "text-danger" })
+                @Html.TextAreaFor(model => model.Groups.About, 5, 20, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Groups.About, "", new { @class = "text-danger" })
             </div>
         </div>
 
         @*<div class="form-group">
-                @Html.LabelFor(model => model.NumberOfMembers, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.LabelFor(model => model.Groups.NumberOfMembers, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     <input class="form-control" id="NumberOfMembers" name="NumberOfMembers" type="number" disabled="">
-                    @Html.ValidationMessageFor(model => model.NumberOfMembers, "", new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(model => model.Groups.NumberOfMembers, "", new { @class = "text-danger" })
                 </div>
             </div>*@
 
         <div class="form-group">
-            @Html.LabelFor(model => model.MeetingPoint, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Groups.MeetingPoint, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.MeetingPoint, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.MeetingPoint, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.Groups.MeetingPoint, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Groups.MeetingPoint, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.TimeOfMeeting, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Groups.TimeOfMeeting, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.TimeOfMeeting, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.TimeOfMeeting, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.Groups.TimeOfMeeting, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Groups.TimeOfMeeting, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.GroupCreator, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Groups.GroupCreator, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.GroupCreator, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.GroupCreator, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.Groups.GroupCreator, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Groups.GroupCreator, "", new { @class = "text-danger" })
             </div>
         </div>
 
         @*<div class="form-group">
-                @Html.LabelFor(model => model.DateCreated, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.LabelFor(model => model.Groups.DateCreated, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.DateCreated, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.DateCreated, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Groups.DateCreated, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Groups.DateCreated, "", new { @class = "text-danger" })
                 </div>
             </div>*@
 
         <div class="form-group">
-            @Html.LabelFor(model => model.GroupType, "Group Type", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Groups.GroupTypesId, "Group Type", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @*@Html.DropDownList("Group Type", new SelectList(Model => Model.), htmlAttributes: new { @class = "form-control" })*@
-                <select id="GroupType" name="GroupType" class="form-control">
-                    <option value="Open">Open</option>
-                    <option value="Closed">Closed</option>
-                </select>
-                @Html.ValidationMessageFor(model => model.GroupType, "", new { @class = "text-danger" })
+                @Html.DropDownListFor(model => model.Groups.GroupTypesId, new SelectList(Model.GroupTypes, "Id", "Name"), "Select Group Type", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Groups.GroupTypesId, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.EntryType, "Entry Type", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Groups.EntryTypesId, "Entry Type", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <select id="EntryType" name="EntryType" class="form-control">
-                    <option value="Free">Free</option>
-                    <option value="Paid">Paid</option>
-                </select>
-                @Html.ValidationMessageFor(model => model.EntryType, "", new { @class = "text-danger" })
+                @Html.DropDownListFor(model => model.Groups.EntryTypesId, new SelectList(Model.EntryTypes, "Id", "Name"), "Select Entry Type", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Groups.EntryTypesId, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.GroupImage, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Interests, "Category", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input id="GroupImage" name="GroupImage" type="file" class="form-control" />
-                @Html.ValidationMessageFor(model => model.GroupImage, "", new { @class = "text-danger" })
+                @Html.DropDownListFor(model => model.Groups.InterestsId, new SelectList(Model.Interests, "Id", "Name"), "Select Category", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Groups.InterestsId, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        @Html.HiddenFor(model => model.Id)
+        <div class="form-group">
+            @Html.Label("Group Image", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <img src="@imgSrc" width="100" height="100" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Upload Image", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input id="File" name="File" type="file" class="form-control" />
+                @Html.ValidationMessageFor(model => model.Groups.GroupImage, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @Html.HiddenFor(model => model.Groups.Id)
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </div>
     </div>

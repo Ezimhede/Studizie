@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Data.Entity;
 
 namespace Studizie.Controllers
 {
@@ -24,7 +25,7 @@ namespace Studizie.Controllers
 
         public ActionResult Index()
         {
-            var groups = _context.Groups.ToList();
+            var groups = _context.Groups.Include(g => g.GroupTypes).Include(g => g.EntryTypes).ToList();
 
             return View(groups);
         }

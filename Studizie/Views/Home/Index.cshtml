@@ -13,7 +13,7 @@
         </p>
 
         @*<button class="btn">Register</button>*@
-        @Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class="btn"})
+        @Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "btn" })
 
         @*<img src="~/Content/Images/studying.jpg" class="//img-responsive"/>*@
     </div>
@@ -34,7 +34,10 @@
                     }
                     else
                     {
-                        <img src="~/Content/Images/@item.GroupImage" />
+                        var base64 = Convert.ToBase64String(item.GroupImage);
+                        var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                        
+                        <img src="@imgSrc" />
                     }
 
                     <textarea rows="1" readonly class="title">@item.Name</textarea>
@@ -42,7 +45,7 @@
                     <textarea rows="3" readonly class="about">@item.About</textarea>
 
                     <div class="footer">
-                        <h6>@item.NumberOfMembers members | @item.GroupType group | @item.EntryType entry</h6>
+                        <h6>@item.NumberOfMembers members | @item.GroupTypes.Name group | @item.EntryTypes.Name entry</h6>
                     </div>
                 </div>
             </div>

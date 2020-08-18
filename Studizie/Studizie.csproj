@@ -18,7 +18,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress />
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -198,15 +198,142 @@
     <Compile Include="Migrations\202005071625475_AddMoreFieldsToApplicationUser.Designer.cs">
       <DependentUpon>202005071625475_AddMoreFieldsToApplicationUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202005202344434_AddedInterestsToGroups.cs" />
+    <Compile Include="Migrations\202005202344434_AddedInterestsToGroups.Designer.cs">
+      <DependentUpon>202005202344434_AddedInterestsToGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202005232243579_AddInterestIdToGroup.cs" />
+    <Compile Include="Migrations\202005232243579_AddInterestIdToGroup.Designer.cs">
+      <DependentUpon>202005232243579_AddInterestIdToGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202005241953419_GroupTypes.cs" />
+    <Compile Include="Migrations\202005241953419_GroupTypes.Designer.cs">
+      <DependentUpon>202005241953419_GroupTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202005251009196_PopulateGroupTypes.cs" />
+    <Compile Include="Migrations\202005251009196_PopulateGroupTypes.Designer.cs">
+      <DependentUpon>202005251009196_PopulateGroupTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202005251512379_EntryTypes.cs" />
+    <Compile Include="Migrations\202005251512379_EntryTypes.Designer.cs">
+      <DependentUpon>202005251512379_EntryTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202005251513305_PopulateEntryTypes.cs" />
+    <Compile Include="Migrations\202005251513305_PopulateEntryTypes.Designer.cs">
+      <DependentUpon>202005251513305_PopulateEntryTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202005252046251_AddedGroupTypesAndEntryTypesToGroups.cs" />
+    <Compile Include="Migrations\202005252046251_AddedGroupTypesAndEntryTypesToGroups.Designer.cs">
+      <DependentUpon>202005252046251_AddedGroupTypesAndEntryTypesToGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202005252050596_EditedGroupTypesAndEntryTypesOfGroups.cs" />
+    <Compile Include="Migrations\202005252050596_EditedGroupTypesAndEntryTypesOfGroups.Designer.cs">
+      <DependentUpon>202005252050596_EditedGroupTypesAndEntryTypesOfGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006012043598_EditedGroupImageOfGroups.cs" />
+    <Compile Include="Migrations\202006012043598_EditedGroupImageOfGroups.Designer.cs">
+      <DependentUpon>202006012043598_EditedGroupImageOfGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006211453559_AddedGroupsToApplicationUser.cs" />
+    <Compile Include="Migrations\202006211453559_AddedGroupsToApplicationUser.Designer.cs">
+      <DependentUpon>202006211453559_AddedGroupsToApplicationUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006281003137_AddedApplicationUserToGroups.cs" />
+    <Compile Include="Migrations\202006281003137_AddedApplicationUserToGroups.Designer.cs">
+      <DependentUpon>202006281003137_AddedApplicationUserToGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006281054252_RemoveApplicationUserFromGroups.cs" />
+    <Compile Include="Migrations\202006281054252_RemoveApplicationUserFromGroups.Designer.cs">
+      <DependentUpon>202006281054252_RemoveApplicationUserFromGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006281110502_AddApplicationUsers_IdToGroups.cs" />
+    <Compile Include="Migrations\202006281110502_AddApplicationUsers_IdToGroups.Designer.cs">
+      <DependentUpon>202006281110502_AddApplicationUsers_IdToGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006281116181_RenameApplicationUsers_IdInGroups.cs" />
+    <Compile Include="Migrations\202006281116181_RenameApplicationUsers_IdInGroups.Designer.cs">
+      <DependentUpon>202006281116181_RenameApplicationUsers_IdInGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006281148438_RemoveApplicationUsers_IdFromGroups.cs" />
+    <Compile Include="Migrations\202006281148438_RemoveApplicationUsers_IdFromGroups.Designer.cs">
+      <DependentUpon>202006281148438_RemoveApplicationUsers_IdFromGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006281306441_RemoveGroupsFromApplicationUsers.cs" />
+    <Compile Include="Migrations\202006281306441_RemoveGroupsFromApplicationUsers.Designer.cs">
+      <DependentUpon>202006281306441_RemoveGroupsFromApplicationUsers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006281503516_DropIndexApplicationUsers_IdFromGroups.cs" />
+    <Compile Include="Migrations\202006281503516_DropIndexApplicationUsers_IdFromGroups.Designer.cs">
+      <DependentUpon>202006281503516_DropIndexApplicationUsers_IdFromGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006281937087_DropApplicationUsersFromGroups.cs" />
+    <Compile Include="Migrations\202006281937087_DropApplicationUsersFromGroups.Designer.cs">
+      <DependentUpon>202006281937087_DropApplicationUsersFromGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006282107201_DeleteApplicationUsers_IdFromGroups.cs" />
+    <Compile Include="Migrations\202006282107201_DeleteApplicationUsers_IdFromGroups.Designer.cs">
+      <DependentUpon>202006282107201_DeleteApplicationUsers_IdFromGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006291053056_AddedApplicationUsersToGroups.cs" />
+    <Compile Include="Migrations\202006291053056_AddedApplicationUsersToGroups.Designer.cs">
+      <DependentUpon>202006291053056_AddedApplicationUsersToGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007022243255_RemovedCollectionOfUsersFromGroups.cs" />
+    <Compile Include="Migrations\202007022243255_RemovedCollectionOfUsersFromGroups.Designer.cs">
+      <DependentUpon>202007022243255_RemovedCollectionOfUsersFromGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007022244390_AddedCollectionOfUsersToGroups.cs" />
+    <Compile Include="Migrations\202007022244390_AddedCollectionOfUsersToGroups.Designer.cs">
+      <DependentUpon>202007022244390_AddedCollectionOfUsersToGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007041834573_RemoveApplicationUsersIdFromGroups.cs" />
+    <Compile Include="Migrations\202007041834573_RemoveApplicationUsersIdFromGroups.Designer.cs">
+      <DependentUpon>202007041834573_RemoveApplicationUsersIdFromGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007041837457_RemoveGroup_IdFromUsers.cs" />
+    <Compile Include="Migrations\202007041837457_RemoveGroup_IdFromUsers.Designer.cs">
+      <DependentUpon>202007041837457_RemoveGroup_IdFromUsers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007161927090_DropTable_ApplicationUserGroups.cs" />
+    <Compile Include="Migrations\202007161927090_DropTable_ApplicationUserGroups.Designer.cs">
+      <DependentUpon>202007161927090_DropTable_ApplicationUserGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007161944385_AddTable_ApplicationUserGroups.cs" />
+    <Compile Include="Migrations\202007161944385_AddTable_ApplicationUserGroups.Designer.cs">
+      <DependentUpon>202007161944385_AddTable_ApplicationUserGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007162155006_AddedDateToApplicationUserGroup.cs" />
+    <Compile Include="Migrations\202007162155006_AddedDateToApplicationUserGroup.Designer.cs">
+      <DependentUpon>202007162155006_AddedDateToApplicationUserGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007171121001_DroppedColumn_DateCreated_FromApplicationUserGroups.cs" />
+    <Compile Include="Migrations\202007171121001_DroppedColumn_DateCreated_FromApplicationUserGroups.Designer.cs">
+      <DependentUpon>202007171121001_DroppedColumn_DateCreated_FromApplicationUserGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007171215071_DroppedTable_ApplicationUserGroup.cs" />
+    <Compile Include="Migrations\202007171215071_DroppedTable_ApplicationUserGroup.Designer.cs">
+      <DependentUpon>202007171215071_DroppedTable_ApplicationUserGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007171338185_AddedApplicationUserGroupTable.cs" />
+    <Compile Include="Migrations\202007171338185_AddedApplicationUserGroupTable.Designer.cs">
+      <DependentUpon>202007171338185_AddedApplicationUserGroupTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\ApplicationUserGroup.cs" />
+    <Compile Include="Models\EntryType.cs" />
     <Compile Include="Models\Group.cs" />
+    <Compile Include="Models\GroupType.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Interest.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Member.cs" />
+    <Compile Include="Models\Roles.cs" />
+    <Compile Include="Models\ValidateFileAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\CreateViewModel.cs" />
+    <Compile Include="ViewModels\MembersViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
@@ -215,6 +342,20 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\brands.css" />
+    <Content Include="Content\brands.min.css" />
+    <Content Include="Content\fontawesome-all.css" />
+    <Content Include="Content\fontawesome-all.min.css" />
+    <Content Include="Content\fontawesome.css" />
+    <Content Include="Content\fontawesome.min.css" />
+    <Content Include="Content\regular.css" />
+    <Content Include="Content\regular.min.css" />
+    <Content Include="Content\solid.css" />
+    <Content Include="Content\solid.min.css" />
+    <Content Include="Content\svg-with-js.css" />
+    <Content Include="Content\svg-with-js.min.css" />
+    <Content Include="Content\v4-shims.css" />
+    <Content Include="Content\v4-shims.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -226,6 +367,20 @@
     <Content Include="Scripts\esm\popper-utils.min.js" />
     <Content Include="Scripts\esm\popper.js" />
     <Content Include="Scripts\esm\popper.min.js" />
+    <Content Include="Scripts\fontawesome\all.js" />
+    <Content Include="Scripts\fontawesome\all.min.js" />
+    <Content Include="Scripts\fontawesome\brands.js" />
+    <Content Include="Scripts\fontawesome\brands.min.js" />
+    <Content Include="Scripts\fontawesome\conflict-detection.js" />
+    <Content Include="Scripts\fontawesome\conflict-detection.min.js" />
+    <Content Include="Scripts\fontawesome\fontawesome.js" />
+    <Content Include="Scripts\fontawesome\fontawesome.min.js" />
+    <Content Include="Scripts\fontawesome\regular.js" />
+    <Content Include="Scripts\fontawesome\regular.min.js" />
+    <Content Include="Scripts\fontawesome\solid.js" />
+    <Content Include="Scripts\fontawesome\solid.min.js" />
+    <Content Include="Scripts\fontawesome\v4-shims.js" />
+    <Content Include="Scripts\fontawesome\v4-shims.min.js" />
     <Content Include="Scripts\index.js.flow" />
     <Content Include="Scripts\esm\popper.min.js.map" />
     <Content Include="Scripts\esm\popper.js.map" />
@@ -377,6 +532,23 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Members\MembersHome.cshtml" />
+    <Content Include="Views\Shared\_LayoutMembers.cshtml" />
+    <Content Include="webfonts\fa-brands-400.svg" />
+    <Content Include="webfonts\fa-regular-400.svg" />
+    <Content Include="webfonts\fa-solid-900.svg" />
+    <Content Include="webfonts\fa-solid-900.woff2" />
+    <Content Include="webfonts\fa-solid-900.woff" />
+    <Content Include="webfonts\fa-solid-900.ttf" />
+    <Content Include="webfonts\fa-solid-900.eot" />
+    <Content Include="webfonts\fa-regular-400.woff2" />
+    <Content Include="webfonts\fa-regular-400.woff" />
+    <Content Include="webfonts\fa-regular-400.ttf" />
+    <Content Include="webfonts\fa-regular-400.eot" />
+    <Content Include="webfonts\fa-brands-400.woff2" />
+    <Content Include="webfonts\fa-brands-400.woff" />
+    <Content Include="webfonts\fa-brands-400.ttf" />
+    <Content Include="webfonts\fa-brands-400.eot" />
+    <Content Include="Views\Members\JoinedGroups.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -402,6 +574,96 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202005071625475_AddMoreFieldsToApplicationUser.resx">
       <DependentUpon>202005071625475_AddMoreFieldsToApplicationUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005202344434_AddedInterestsToGroups.resx">
+      <DependentUpon>202005202344434_AddedInterestsToGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005232243579_AddInterestIdToGroup.resx">
+      <DependentUpon>202005232243579_AddInterestIdToGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005241953419_GroupTypes.resx">
+      <DependentUpon>202005241953419_GroupTypes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005251009196_PopulateGroupTypes.resx">
+      <DependentUpon>202005251009196_PopulateGroupTypes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005251512379_EntryTypes.resx">
+      <DependentUpon>202005251512379_EntryTypes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005251513305_PopulateEntryTypes.resx">
+      <DependentUpon>202005251513305_PopulateEntryTypes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005252046251_AddedGroupTypesAndEntryTypesToGroups.resx">
+      <DependentUpon>202005252046251_AddedGroupTypesAndEntryTypesToGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202005252050596_EditedGroupTypesAndEntryTypesOfGroups.resx">
+      <DependentUpon>202005252050596_EditedGroupTypesAndEntryTypesOfGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006012043598_EditedGroupImageOfGroups.resx">
+      <DependentUpon>202006012043598_EditedGroupImageOfGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006211453559_AddedGroupsToApplicationUser.resx">
+      <DependentUpon>202006211453559_AddedGroupsToApplicationUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006281003137_AddedApplicationUserToGroups.resx">
+      <DependentUpon>202006281003137_AddedApplicationUserToGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006281054252_RemoveApplicationUserFromGroups.resx">
+      <DependentUpon>202006281054252_RemoveApplicationUserFromGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006281110502_AddApplicationUsers_IdToGroups.resx">
+      <DependentUpon>202006281110502_AddApplicationUsers_IdToGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006281116181_RenameApplicationUsers_IdInGroups.resx">
+      <DependentUpon>202006281116181_RenameApplicationUsers_IdInGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006281148438_RemoveApplicationUsers_IdFromGroups.resx">
+      <DependentUpon>202006281148438_RemoveApplicationUsers_IdFromGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006281306441_RemoveGroupsFromApplicationUsers.resx">
+      <DependentUpon>202006281306441_RemoveGroupsFromApplicationUsers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006281503516_DropIndexApplicationUsers_IdFromGroups.resx">
+      <DependentUpon>202006281503516_DropIndexApplicationUsers_IdFromGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006281937087_DropApplicationUsersFromGroups.resx">
+      <DependentUpon>202006281937087_DropApplicationUsersFromGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006282107201_DeleteApplicationUsers_IdFromGroups.resx">
+      <DependentUpon>202006282107201_DeleteApplicationUsers_IdFromGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006291053056_AddedApplicationUsersToGroups.resx">
+      <DependentUpon>202006291053056_AddedApplicationUsersToGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007022243255_RemovedCollectionOfUsersFromGroups.resx">
+      <DependentUpon>202007022243255_RemovedCollectionOfUsersFromGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007022244390_AddedCollectionOfUsersToGroups.resx">
+      <DependentUpon>202007022244390_AddedCollectionOfUsersToGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007041834573_RemoveApplicationUsersIdFromGroups.resx">
+      <DependentUpon>202007041834573_RemoveApplicationUsersIdFromGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007041837457_RemoveGroup_IdFromUsers.resx">
+      <DependentUpon>202007041837457_RemoveGroup_IdFromUsers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007161927090_DropTable_ApplicationUserGroups.resx">
+      <DependentUpon>202007161927090_DropTable_ApplicationUserGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007161944385_AddTable_ApplicationUserGroups.resx">
+      <DependentUpon>202007161944385_AddTable_ApplicationUserGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007162155006_AddedDateToApplicationUserGroup.resx">
+      <DependentUpon>202007162155006_AddedDateToApplicationUserGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007171121001_DroppedColumn_DateCreated_FromApplicationUserGroups.resx">
+      <DependentUpon>202007171121001_DroppedColumn_DateCreated_FromApplicationUserGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007171215071_DroppedTable_ApplicationUserGroup.resx">
+      <DependentUpon>202007171215071_DroppedTable_ApplicationUserGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007171338185_AddedApplicationUserGroupTable.resx">
+      <DependentUpon>202007171338185_AddedApplicationUserGroupTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
