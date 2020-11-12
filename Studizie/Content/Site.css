@@ -526,9 +526,55 @@ dd {
     background-color: #002C66;
 }
 
-/*Styles for Members Joined Groups Tab*/
 
-/*.members .nav-pills a:hover {
-    background-color: #006fff;
-    color: white;
-}*/
+/*Styles for Members' Create Group view*/
+
+.members .createGroup input, .createGroup textarea {
+    max-width: 100%;
+}
+
+.members .createGroup .form-control {
+    margin-left: 0;
+}
+
+.members .createGroup .row:last-child {
+    margin-top: 50px;
+}
+
+.members .createGroup .groupImage {
+    top: 100px;
+    display: flex;
+    flex-direction: column;
+}
+
+.members .createGroup .save {
+    width: 100% !important;
+}
+
+.members .createGroup .imageLabel {
+    width: 200px;
+}
+
+.members .createGroup img {
+    object-fit: cover;
+}
+
+
+/*Styles for MembersHome MyGroups tab*/
+
+.members .btn-edit, .members .btn-delete {
+    width: 45%;
+}
+
+.members .btn-delete {
+    background-color: red !important;
+}
+
+.members .groups .infoText {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+

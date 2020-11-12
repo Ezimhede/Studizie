@@ -17,6 +17,7 @@ namespace Studizie.Models
         public int Id { get; set; }
 
         [Required]
+        [Display(Name = "Group Name")]
         public string Name { get; set; }
 
         [Required]
@@ -40,10 +41,14 @@ namespace Studizie.Models
 
         //public int MemberId { get; set; }
         public Interest Interests { get; set; }
-        public int? InterestsId { get; set; }
+
+        [Display(Name = "Category")]
+        public int InterestsId { get; set; }
 
         [Display(Name = "Group Type")]
         public virtual GroupType GroupTypes { get; set; }
+
+        [Display(Name = "Group Type")]
         public int GroupTypesId { get; set; }
 
         [Display(Name = "Entry Type")]
@@ -52,6 +57,9 @@ namespace Studizie.Models
 
         [Display(Name = "Group Image")]
         public byte[] GroupImage { get; set; }
+
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
 
         public ICollection<ApplicationUserGroup> ApplicationUserGroups { get; set; }
 

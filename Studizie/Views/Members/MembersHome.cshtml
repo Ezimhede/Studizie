@@ -22,13 +22,15 @@
             <a class="nav-link" id="pills-joined-tab" href="#pills-joined" data-toggle="pill" role="tab" aria-controls="pills-joined" aria-selected="false">Joined Groups</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="pills-contact-tab" data-toggle="pill" role="tab" aria-controls="pills-contact" aria-selected="false">My Groups</a>
+            <a class="nav-link" id="pills-myGroups-tab" href="#pills-myGroups" data-toggle="pill" role="tab" aria-controls="pills-myGroups" aria-selected="false">My Groups</a>
         </li>
     </ul>
 </div>
 
 @*this section populates the ajax request values*@
 <div class="tab-content" id="pills-tabContent">
+
+    @*populates the All Groups tab*@
     <div class="groups container tab-pane fade show active" id="pills-all" role="tabpanel" aria-labelledby="pills-all-tab">
         <div id="science">
             <h3 class='mb-4' hidden>Science</h3>
@@ -68,13 +70,21 @@
         </div>
     </div>
 
-    <div class="groups container tab-pane fade" id="pills-joined" role="tabpanel" aria-labelledby="pills-joined-tab">
-        <div class="joined"></div>
+    @*populates the Joined Groups tab*@
+<div class="groups container tab-pane fade" id="pills-joined" role="tabpanel" aria-labelledby="pills-joined-tab">
+    <p class="text-center align-self-center infoText joinedGroupsInfo" hidden>You haven't joined any group yet</p>
+    <div class="joined"></div>
+</div>
+
+    @*populates the My Groups tab*@
+    <div class="groups container tab-pane fade" id="pills-myGroups" role="tabpanel" aria-labelledby="pills-myGroups-tab">
+        <p class="text-center align-self-center infoText myGroupsInfo" hidden>You don't have any group to display</p>
+        <div class="myGroups"></div>
     </div>
 </div>
 
 
-<!-- Modal -->
+<!-- Modal for All Groups-->
 <div class="modal fade" id="groupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -101,6 +111,91 @@
                     <input id="Id" name="Id" type="hidden" value="@User.Identity.GetUserId()">
                     <button class="btn btn-block" type="submit">Join Group</button>
                 }
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <h6><span class="membersCount"></span> members</h6> |
+                <h6><span class="groupType"></span> group</h6> |
+                <h6><span class="entryType"></span> entry</h6>
+            </div>
+            <p class="text-center">Group created by <span class="creator"></span></p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Joined Groups -->
+<div class="modal fade" id="joinedModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <img class="headerImage" src="~/Content/Images/Outside.jpg" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    @*<span aria-hidden="true">&times;</span>*@
+                    <img src="~/Content/Images/Close.png" />
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <h3 class="title text-center">asd</h3>
+                <h6 class="about">sdfd</h6>
+                <p><span>Meeting Point:</span> <span class="meeting"></span></p>
+                <p><span>Time:</span> <span class="time"></span></p>
+
+                @using (Html.BeginForm("LeaveGroup", "Members", FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.Users.Id)
+                    @*@Html.Hidden("groupId", new { @class = "id" })*@
+                    <input id="groupId" name="groupId" type="hidden" value="" class="id">
+                    <input id="Id" name="Id" type="hidden" value="@User.Identity.GetUserId()">
+                    <button class="btn btn-block" type="submit">Leave Group</button>
+                }
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <h6><span class="membersCount"></span> members</h6> |
+                <h6><span class="groupType"></span> group</h6> |
+                <h6><span class="entryType"></span> entry</h6>
+            </div>
+            <p class="text-center">Group created by <span class="creator"></span></p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for My Groups -->
+<div class="modal fade" id="myGroupsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <img class="headerImage" src="~/Content/Images/Outside.jpg" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    @*<span aria-hidden="true">&times;</span>*@
+                    <img src="~/Content/Images/Close.png" />
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <h3 class="title text-center">asd</h3>
+                <h6 class="about">sdfd</h6>
+                <p><span>Meeting Point:</span> <span class="meeting"></span></p>
+                <p><span>Time:</span> <span class="time"></span></p>
+
+                @*@using (Html.BeginForm("DeleteGroup", "Members", FormMethod.Post))
+                    {
+                        @Html.HiddenFor(m => m.Users.Id)
+                        <input id="groupId" name="groupId" type="hidden" value="" class="id">
+                        <input id="Id" name="Id" type="hidden" value="@User.Identity.GetUserId()">
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-delete" type="submit">Delete Group</button>
+                        </div>
+                    }*@
+
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-delete" type="submit" onclick="DeleteGroup()">Delete Group</button>
+                    <button class="btn btn-edit" type="submit" onclick="EditGroup()">Edit Group</button>
+                </div>
+
             </div>
 
             <div class="modal-footer justify-content-between">
@@ -142,9 +237,25 @@
                     dataType: "json",
                     contentType: "application/json",
                     success: function (data) {
-                        console.log(data);
+                        if (data.length == 0) {
+                            $('.joinedGroupsInfo').removeAttr("hidden");
+                        }
                         joinedGroups = data;
-                        //PopulateModal();
+                    }
+                }),
+
+                //get groups a member created
+                $.ajax({
+                    url: '/members/mygroups/' + id,
+                    type: "Get",
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (data) {
+                        console.log("my groups", data);
+                        if (data.length == 0) {
+                            $('.myGroupsInfo').removeAttr("hidden");
+                        }
+                        myGroups = data;
                     }
                 })
 
@@ -155,10 +266,39 @@
 
                 JoinedGroups(joinedGroups);
                 PopulateModal();
+
+                MyGroups(myGroups);
+                PopulateModal();
             });
 
 
         });
+
+        //Get edit form when 'Edit Group' is clicked
+        function EditGroup() {
+
+            var id = $('#groupId').val();
+            var userId = $('#Id').val();
+
+            window.location.href = '/Members/EditGroup?id=' + id + '&userId=' + userId;
+
+            //$.ajax({
+            //    url: '/Members/EditGroup?id=' + id + '&userId=' + userId,
+            //    type: "POST",
+            //    dataType: "Json",
+            //    contentType: "application/json",
+            //    success: function (data) {
+            //    }
+            //})
+        };
+
+        //Delete a group created by a member
+        function DeleteGroup() {
+
+            var id = $('#groupId').val();
+
+            window.location.href = '/Members/DeleteGroup?groupId=' + id;
+        };
 
         //Populate the Joined Groups tab
         function JoinedGroups(data) {
@@ -170,7 +310,7 @@
                 var src = "/members/renderimage?groupId=" + item.Id;
 
                 details += '<div class="col-sm-6 col-md-4 col-lg-3">'
-                details += '<div class="group" data-toggle="modal" data-target="#groupModal">'
+                details += '<div class="group" data-toggle="modal" data-target="#joinedModal">'
                 details += '<img class="avatar" src =' + src
                 details += '>'
                 details += '<textarea rows="1" readonly class="title">' + item.Name + '</textarea>'
@@ -201,7 +341,7 @@
         function AllGroups(data) {
 
             if (data.Users.IsScience) {
-                
+
                 var details = '';
 
                 for (var item of data.Groups) {
@@ -240,7 +380,7 @@
             };
 
             if (data.Users.IsArts) {
-                
+
                 var details = '';
 
                 for (var item of data.Groups) {
@@ -278,7 +418,7 @@
             };
 
             if (data.Users.IsTechnology) {
-                
+
                 var details = '';
 
                 for (var item of data.Groups) {
@@ -316,7 +456,7 @@
             };
 
             if (data.Users.IsEducation) {
-                
+
                 var details = '';
 
                 for (var item of data.Groups) {
@@ -399,7 +539,7 @@
             };
 
             if (data.Users.IsReligious) {
-                
+
                 var details = '';
 
                 for (var item of data.Groups) {
@@ -437,7 +577,7 @@
             };
 
             if (data.Users.IsSkillAcquisition) {
-                
+
                 var details = '';
 
                 for (var item of data.Groups) {
@@ -475,7 +615,7 @@
             };
 
             if (data.Users.IsEntrepreneurship) {
-                
+
                 var details = '';
 
                 for (var item of data.Groups) {
@@ -513,7 +653,7 @@
             };
 
             if (data.Users.IsGames) {
-                
+
                 var details = '';
 
                 for (var item of data.Groups) {
@@ -549,7 +689,44 @@
                     };
                 };
             };
-            
+
+        };
+
+        //Populate the My Groups tab
+        function MyGroups(data) {
+
+            var details = '';
+
+            data.map(function (item, index, array) {
+
+                var src = "/members/renderimage?groupId=" + item.Id;
+
+                details += '<div class="col-sm-6 col-md-4 col-lg-3">'
+                details += '<div class="group" data-toggle="modal" data-target="#myGroupsModal">'
+                details += '<img class="avatar" src =' + src
+                details += '>'
+                details += '<textarea rows="1" readonly class="title">' + item.Name + '</textarea>'
+                details += '<textarea rows="3" readonly class="about">' + item.About + '</textarea >'
+
+                details += '<p class="meeting" hidden >' + item.MeetingPoint + '</p >'
+                details += '<p class="time" hidden>' + item.TimeOfMeeting + '</p>'
+                details += '<p class="membersCount" hidden>' + item.NumberOfMembers + '</p>'
+                details += '<p class="groupType" hidden>' + item.GroupTypes.Name + '</p>'
+                details += '<p class="entryType" hidden>' + item.EntryTypes.Name + '</p>'
+                details += '<p class="creator" hidden>' + item.GroupCreator + '</p>'
+                details += '<p class="groupId" hidden>' + item.Id + '</p>'
+
+                details += '<div class="footer">'
+                details += '<h6>' + item.NumberOfMembers + ' members |' + item.GroupTypes.Name + ' group | ' + item.EntryTypes.Name + ' entry' + '</h6>'
+                details += '</div>'
+
+                details += '</div>'
+                details += '</div>'
+
+                $('.myGroups').html(details);
+            });
+
+            $('.myGroups .col-sm-6').wrapAll("<div class='row'></div>");
         };
 
         //Get clicked group contents and set it as modal contents
@@ -578,9 +755,10 @@
                 $('.modal-footer .entryType').html(entryType);
                 $('.modal-content .creator').html(creator);
                 $('.modal-content .id').val(groupId);
-
             });
         };
+
+
 
     </script>
 }

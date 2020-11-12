@@ -41,7 +41,7 @@ namespace Studizie.Controllers
         // Create Groups
         public ActionResult Create()
         {
-            var viewModel = new CreateViewModel()
+            var viewModel = new GroupsViewModel()
             {
                 Groups = new Group(),
                 Interests = _context.Interests.ToList(),
@@ -55,7 +55,7 @@ namespace Studizie.Controllers
         // POST Groups/Create
         // Save created or edited groups
         [HttpPost]
-        public ActionResult Save(CreateViewModel group, HttpPostedFileBase File)
+        public ActionResult Save(GroupsViewModel group, HttpPostedFileBase File)
         {
 
             if (!ModelState.IsValid)
@@ -115,7 +115,7 @@ namespace Studizie.Controllers
         // GET: Edit view:  Groups/edit
         public ActionResult Edit(int id)
         {
-            var viewModel = new CreateViewModel()
+            var viewModel = new GroupsViewModel()
             {
                 Groups = _context.Groups.SingleOrDefault(i => i.Id == id),
                 Interests = _context.Interests.ToList(),

@@ -318,6 +318,14 @@
     <Compile Include="Migrations\202007171338185_AddedApplicationUserGroupTable.Designer.cs">
       <DependentUpon>202007171338185_AddedApplicationUserGroupTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008241624430_AddedApplicationUserIdToGroups.cs" />
+    <Compile Include="Migrations\202008241624430_AddedApplicationUserIdToGroups.Designer.cs">
+      <DependentUpon>202008241624430_AddedApplicationUserIdToGroups.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202008271029402_RemovedNullableFromInterestId.cs" />
+    <Compile Include="Migrations\202008271029402_RemovedNullableFromInterestId.Designer.cs">
+      <DependentUpon>202008271029402_RemovedNullableFromInterestId.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationUserGroup.cs" />
@@ -332,7 +340,7 @@
     <Compile Include="Models\ValidateFileAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ViewModels\CreateViewModel.cs" />
+    <Compile Include="ViewModels\GroupsViewModel.cs" />
     <Compile Include="ViewModels\MembersViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -549,6 +557,7 @@
     <Content Include="webfonts\fa-brands-400.ttf" />
     <Content Include="webfonts\fa-brands-400.eot" />
     <Content Include="Views\Members\JoinedGroups.cshtml" />
+    <Content Include="Views\Members\CreateGroup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -664,6 +673,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202007171338185_AddedApplicationUserGroupTable.resx">
       <DependentUpon>202007171338185_AddedApplicationUserGroupTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008241624430_AddedApplicationUserIdToGroups.resx">
+      <DependentUpon>202008241624430_AddedApplicationUserIdToGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008271029402_RemovedNullableFromInterestId.resx">
+      <DependentUpon>202008271029402_RemovedNullableFromInterestId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

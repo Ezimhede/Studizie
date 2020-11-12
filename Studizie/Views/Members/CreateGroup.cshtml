@@ -1,0 +1,150 @@
+﻿@model Studizie.ViewModels.GroupsViewModel
+@using Microsoft.AspNet.Identity
+
+@{
+    /**/
+
+    ViewBag.Title = "Create Group";
+    Layout = "~/Views/Shared/_LayoutMembers.cshtml";
+}
+
+@*(Ajax.BeginForm("SaveGroup", "Members", new AjaxOptions { HttpMethod = "POST" }, new { enctype = "multipart/form-data" }))*@
+
+@using (Html.BeginForm("SaveGroup", "Members", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="container createGroup">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="row">
+            <div class="col-md-4 offset-md-1 groupImage">
+                <span id="fileError"></span>
+                <p>Group Image</p>
+                <img src="" width="200" height="200" id="groupImage" alt=""/>
+                <label for="File" class="btn btn-primary mt-3 imageLabel">
+                    Upload Image
+                    <input id="File" name="File" type="file" class="form-control" hidden />
+                </label>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Groups.Name, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Groups.Name, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Groups.Name, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Groups.About, new { @class = "control-label" })
+                    @Html.TextAreaFor(model => model.Groups.About, 5, 20, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Groups.About, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Groups.MeetingPoint, new { @class = "control-label" })
+                    @Html.TextBoxFor(model => model.Groups.MeetingPoint, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Groups.MeetingPoint, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Groups.TimeOfMeeting, new { @class = "control-label" })
+                    @Html.TextBoxFor(model => model.Groups.TimeOfMeeting, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Groups.TimeOfMeeting, "", new { @class = "text-danger" })
+
+                    <input id="Groups_ApplicationUserId" name="Groups.ApplicationUserId" type="hidden" value="@User.Identity.GetUserId()">
+                    <input id="Groups_GroupCreator" name="Groups.GroupCreator" type="hidden" value="@ViewBag.user.FirstName">
+                    @Html.HiddenFor(m => m.Groups.Id)
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Groups.GroupTypes, new { @class = "control-label" })
+                            @Html.DropDownListFor(m => m.Groups.GroupTypesId, new SelectList(Model.GroupTypes, "Id", "Name"), "Select Group Type", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Groups.GroupTypesId, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Groups.EntryTypes, new { @class = "control-label" })
+                            @Html.DropDownListFor(m => m.Groups.EntryTypesId, new SelectList(Model.EntryTypes, "Id", "Name"), "Select Entry Type", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Groups.EntryTypesId, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label" for="Groups_Interests">Category</label>
+                            @Html.DropDownListFor(m => m.Groups.InterestsId, new SelectList(Model.Interests, "Id", "Name"), "Select Category", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Groups.InterestsId, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-3 save" type="submit">Save</button>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts {
+
+    @*For client side validation*@
+    @Scripts.Render("~/bundles/jqueryval");
+
+    <script>
+
+        // Get the group image and display it in the form, only when editing a form
+        $(window).on("load", function () {
+
+            var groupId = $('#Groups_Id').val();
+            var src = "/members/renderimage?groupId=" + groupId;
+
+            $('#groupImage').attr("src", src);
+
+            //$.ajax({
+            //    url: '/Members/RenderImage?groupId=' + groupId,
+            //    type: "Get",
+            //    dataType: "json",
+            //    contentType: "application/json",
+            //    success: function (data) {
+            //        $('#groupImage').attr("src", data);
+            //    }
+            //})
+        })
+
+        // Get uploaded image and set it as the image source
+        function readURL(input) {
+
+            $('#fileError').html("");
+            var fileSize = $('#File')[0].files[0].size;
+
+            // Check file size. only images less than 300kb allowed
+            if (fileSize > 300000) {
+                $('#fileError').html("<p class='text-danger'>File size is greater than 300kb</p>");
+                return false;
+            }
+            //return true;
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#groupImage').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $('#File').change(function () {
+            readURL(this);
+        });
+
+        function Submit() {
+            alert();
+            $.ajax({
+                url: '/members/SaveGroup/',
+                type: "Post",
+                dataType: "json",
+                contentType: "application/json",
+                success: function (data) {
+                }
+            })
+        }
+
+    </script>
+}
+
+

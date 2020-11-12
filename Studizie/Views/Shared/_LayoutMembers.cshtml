@@ -25,7 +25,7 @@
 
             <div class="navbar-collapse collapse" id="navbarToggler">
                 <ul class="navbar-nav navbar-right">
-                    <li class="nav-item">@Html.ActionLink("Create Group", "Login", "MembersHome", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
+                    <li class="nav-item">@Html.ActionLink("Create Group", "CreateGroup", "Members", routeValues: new { id = @User.Identity.GetUserId()}, htmlAttributes: new { @class = "nav-link" })</li>
                     <li class="nav-item"><span class="fas fa-bell nav-link"></span></li>
                     <li class="nav-item"><img src="~/Content/Images/Avatar.png" alt="avatar" width="48" class="nav-link" /></li>
                     <li class="nav-item">@Html.ActionLink("Sign Out", "Login", "Account", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
@@ -54,6 +54,7 @@
             </li>
         </ul>
     </div>*@
+
     @RenderBody()
 
     @*<div class="container body-content">
@@ -70,12 +71,6 @@
 
     @section scripts {
         <script>
-
-            //$(document).ready(function () {
-            //    $('.nav-item').click(function () {
-            //        alert();
-            //    });
-            //});
 
         </script>
     }

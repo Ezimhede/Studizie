@@ -6,7 +6,7 @@ using Studizie.Models;
 
 namespace Studizie.ViewModels
 {
-    public class CreateViewModel
+    public class GroupsViewModel
     {
         public Group Groups { get; set; }
         public IEnumerable<Interest> Interests { get; set; }
