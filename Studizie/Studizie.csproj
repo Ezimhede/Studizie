@@ -326,6 +326,22 @@
     <Compile Include="Migrations\202008271029402_RemovedNullableFromInterestId.Designer.cs">
       <DependentUpon>202008271029402_RemovedNullableFromInterestId.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202011122114045_AddedNotificationEntity.cs" />
+    <Compile Include="Migrations\202011122114045_AddedNotificationEntity.Designer.cs">
+      <DependentUpon>202011122114045_AddedNotificationEntity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012130915325_AddedNotificationTypeToNotifications.cs" />
+    <Compile Include="Migrations\202012130915325_AddedNotificationTypeToNotifications.Designer.cs">
+      <DependentUpon>202012130915325_AddedNotificationTypeToNotifications.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012132134213_AddedeMemberIdToNotifications.cs" />
+    <Compile Include="Migrations\202012132134213_AddedeMemberIdToNotifications.Designer.cs">
+      <DependentUpon>202012132134213_AddedeMemberIdToNotifications.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012140855343_AddedeGroupIdToNotifications.cs" />
+    <Compile Include="Migrations\202012140855343_AddedeGroupIdToNotifications.Designer.cs">
+      <DependentUpon>202012140855343_AddedeGroupIdToNotifications.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationUserGroup.cs" />
@@ -336,6 +352,7 @@
     <Compile Include="Models\Interest.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Member.cs" />
+    <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Roles.cs" />
     <Compile Include="Models\ValidateFileAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -558,6 +575,7 @@
     <Content Include="webfonts\fa-brands-400.eot" />
     <Content Include="Views\Members\JoinedGroups.cshtml" />
     <Content Include="Views\Members\CreateGroup.cshtml" />
+    <Content Include="Views\Members\Payment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -679,6 +697,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202008271029402_RemovedNullableFromInterestId.resx">
       <DependentUpon>202008271029402_RemovedNullableFromInterestId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011122114045_AddedNotificationEntity.resx">
+      <DependentUpon>202011122114045_AddedNotificationEntity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012130915325_AddedNotificationTypeToNotifications.resx">
+      <DependentUpon>202012130915325_AddedNotificationTypeToNotifications.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012132134213_AddedeMemberIdToNotifications.resx">
+      <DependentUpon>202012132134213_AddedeMemberIdToNotifications.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012140855343_AddedeGroupIdToNotifications.resx">
+      <DependentUpon>202012140855343_AddedeGroupIdToNotifications.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

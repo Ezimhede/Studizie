@@ -353,6 +353,18 @@ dd {
     box-shadow: #eaeaea 0 5px 5px;
 }
 
+.members .navbar .fa-bell {
+    position: relative;
+}
+
+.members .navbar .fa-bell i {
+	color: red;
+	position: absolute;
+	right: 5px;
+	font-size: 14px;
+	top: 20px;
+}
+
 .members .navbar-brand {
     color: #006FFF !important;
     font-family: 'Pacifico',cursive;
@@ -525,6 +537,59 @@ dd {
 .members .modal-backdrop {
     background-color: #002C66;
 }
+
+/*Styles for Notification Modal*/
+
+.members .notificationModal .modal-body {
+    padding: 10px 12px 20px 12px;
+}
+
+.members .notificationModal .notifs {
+    background-color: rgba(0, 111, 255, 0.1);
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.members .notifs .d-flex p {
+    font-size: 12px;
+    margin-bottom: 0 !important;
+}
+
+.members .notificationModal h3 {
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.members .notificationModal .modal-dialog {
+    position: absolute;
+    right: 50px;
+    /*top: -200px;*/
+    min-width: 350px;
+}
+
+.members .notificationModal .modal-content {
+    height: 500px;
+    overflow-y: scroll;
+    top: -50px;
+}
+
+.members .notificationModal button {
+    color: #707070;
+    background-color: transparent;
+    border: 2px solid #707070;
+    padding: 0.375rem 1.5rem;
+    margin-top: 0px;
+    margin-bottom: 12px;
+}
+
+.members .fa-bell:hover {
+    cursor: pointer;
+}
+
 
 
 /*Styles for Members' Create Group view*/

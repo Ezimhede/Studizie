@@ -6,7 +6,7 @@
     Layout = "~/Views/Shared/_LayoutMembers.cshtml";
 }
 
-<h4 class="error-message" hidden>@ViewBag.message</h4>
+@*<h4 class="error-message" hidden>@ViewBag.message</h4>*@
 
 @functions
 {
@@ -26,6 +26,46 @@
         </li>
     </ul>
 </div>
+
+@if (ViewBag.joinSuccess)
+{
+    <div class="container alert alert-success alert-dismissible fade show" role="alert">
+        <h6>You have successfully joined the group</h6>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+@if (ViewBag.joinSuccess == false)
+{
+    <span></span>
+}
+
+@if (ViewBag.leaveSuccess)
+{
+    <div class="container alert alert-success alert-dismissible fade show" role="alert">
+        <h6>You have successfully left the group</h6>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+@if (ViewBag.alreadyJoined == false)
+{
+    <span></span>
+}
+
+@if (ViewBag.alreadyJoined == true)
+{
+    <div class="container alert alert-warning alert-dismissible fade show" role="alert">
+        <h6>You have already joined this group</h6>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
 
 @*this section populates the ajax request values*@
 <div class="tab-content" id="pills-tabContent">
@@ -71,10 +111,10 @@
     </div>
 
     @*populates the Joined Groups tab*@
-<div class="groups container tab-pane fade" id="pills-joined" role="tabpanel" aria-labelledby="pills-joined-tab">
-    <p class="text-center align-self-center infoText joinedGroupsInfo" hidden>You haven't joined any group yet</p>
-    <div class="joined"></div>
-</div>
+    <div class="groups container tab-pane fade" id="pills-joined" role="tabpanel" aria-labelledby="pills-joined-tab">
+        <p class="text-center align-self-center infoText joinedGroupsInfo" hidden>You haven't joined any group yet</p>
+        <div class="joined"></div>
+    </div>
 
     @*populates the My Groups tab*@
     <div class="groups container tab-pane fade" id="pills-myGroups" role="tabpanel" aria-labelledby="pills-myGroups-tab">
@@ -111,6 +151,7 @@
                     <input id="Id" name="Id" type="hidden" value="@User.Identity.GetUserId()">
                     <button class="btn btn-block" type="submit">Join Group</button>
                 }
+
             </div>
 
             <div class="modal-footer justify-content-between">
@@ -217,6 +258,9 @@
             var id = $('#Id').val();
             console.log(id);
 
+            //var userId = $('.createGroup').val();
+            //console.log("userId is " + userId);
+
             $.when(
                 // Get all available groups
                 $.ajax({
@@ -227,6 +271,7 @@
                     success: function (data) {
                         allGroups = data;
                         //PopulateModal();
+                        console.log("All groups data", data);
                     }
                 }),
 
@@ -257,6 +302,30 @@
                         }
                         myGroups = data;
                     }
+                }),
+
+                //Get notifications once a member logs in
+                $.ajax({
+                    url: '/members/getnotifications/' + id,
+                    type: "Get",
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (data) {
+
+                        //debugger;
+                        //data.sort();
+                        data.reverse();
+                        //data.sort(function (a, b) { return a.Date - b.Date });
+
+                        notifications = data;
+                        if (data.length != 0) {
+                            $('.fa-circle').removeAttr("hidden"); //show red circle on notification icon when there are available notifications
+                        }
+                        if (data.length == 0) {
+                            $('.notifs').html("You don't have any notifications");
+                        }
+                        console.log("Notifications", data);
+                    }
                 })
 
             ).then(function () {
@@ -269,6 +338,8 @@
 
                 MyGroups(myGroups);
                 PopulateModal();
+
+                ShowNotifications(notifications);
             });
 
 
@@ -281,15 +352,6 @@
             var userId = $('#Id').val();
 
             window.location.href = '/Members/EditGroup?id=' + id + '&userId=' + userId;
-
-            //$.ajax({
-            //    url: '/Members/EditGroup?id=' + id + '&userId=' + userId,
-            //    type: "POST",
-            //    dataType: "Json",
-            //    contentType: "application/json",
-            //    success: function (data) {
-            //    }
-            //})
         };
 
         //Delete a group created by a member
@@ -758,6 +820,104 @@
             });
         };
 
+        //Populate the notifications modal
+        function ShowNotifications(data) {
+
+            //debugger;
+            var details = '';
+
+            data.map(function (item, index, array) {
+
+                var groupId = item.GroupId;
+                var memberId = item.MemberId;
+                var Id = item.ApplicationUserId;
+                var notificationId = item.NotificationId;
+
+                var date = item.Date.replace(/\D/g, ''); //Strip all non-numeric characters from string
+                var dateInt = parseInt(date);
+                var date = new Date(dateInt).toLocaleDateString();
+
+                var time = new Date(dateInt).toLocaleTimeString();
+                var time = time.replace(/\:\d+/, ""); //remove the milliseconds from the time
+
+                // Notifications to be displayed for plain notifications
+                if (item.NotificationType == "Plain") {
+                    details += '<div class="notifs">'
+                    details += '<p class="title">' + item.Message + '</p>'
+                    details += '<div class="d-flex justify-content-between">'
+                    details += '<p class="date">' + date + '</p>'
+                    details += '<p class="time">' + time + '</p>'
+                    details += '</div>'
+                    details += '</div>'
+
+                    $('.notificationModal .modal-body').html(details);
+                };
+
+                // Notifications to be displayed for request notifications
+                if (item.NotificationType == "Request") {
+                    details += '<div class="notifs">'
+                    details += '<p class="title">' + item.Message + '</p>'
+                    details += '<div class="d-flex">'
+
+                    details += '<form method="Post" action="/Members/SaveAcceptedGroup">'
+                    details += '<button class="btn btnAccept">Accept</button>'
+                    details += '<input id="groupId" name="groupId" type="hidden" value= ' + groupId + ' class="id">'
+                    details += '<input id="memberId" name="memberId" type="hidden" value= ' + memberId + ' class="id">'
+                    details += '<input id="Id" name="Id" type="hidden" value= ' + Id + ' class="id">'
+                    details += '<input id="notificationId" name="notificationId" type="hidden" value= ' + notificationId + ' class="id">'
+                    details += '</form>'
+
+                    details += '<form method="Post" action="/Members/RejectRequest">'
+                    details += '<button class="btn ml-3">Reject</button>'
+                    details += '<input id="groupId" name="groupId" type="hidden" value= ' + groupId + ' class="id">'
+                    details += '<input id="memberId" name="memberId" type="hidden" value= ' + memberId + ' class="id">'
+                    details += '<input id="Id" name="Id" type="hidden" value= ' + Id + ' class="id">'
+                    details += '<input id="notificationId" name="notificationId" type="hidden" value= ' + notificationId + ' class="id">'
+                    details += '</form>'
+
+                    details += '</div>'
+                    details += '<div class="d-flex justify-content-between">'
+                    details += '<p class="date">' + date + '</p>'
+                    details += '<p class="time">' + time + '</p>'
+                    details += '</div>'
+                    details += '</div>'
+
+                    $('.notificationModal .modal-body').html(details);
+                };
+
+            });
+        };
+
+        // When the group creator accepts a group request
+
+        //function AcceptRequest() {
+
+        //    var groupId = $('#groupId').val();
+        //    var memberId = $('#memberId').val();
+        //    var id = $('#Id').val();
+        //    var notificationId = $('#notificationId').val();
+        //    var noft = $(this).find('#notificationId');
+        //    console.log("value is ", noft);
+
+        //    $.ajax({
+        //        url: '/Members/SaveAcceptedGroup?Id=' + id + "&memberId=" + memberId + "&groupId="
+        //            + groupId + "&notificationId=" + notificationId,
+        //        type: "Get",
+        //        dataType: "json",
+        //        contentType: "application/json",
+        //        success: function (data) {
+        //            if (data.length > 0) {
+        //                $('.btnAccept').attr("disabled", "true");
+        //            }
+
+        //        }
+        //    })
+        //};
+
+        //hide red circle on notification icon when the icon is clicked
+        $('.fa-bell').on("click", function () {
+            $('.fa-circle').attr("hidden", "true");
+        });
 
 
     </script>

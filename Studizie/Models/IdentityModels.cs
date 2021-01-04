@@ -33,6 +33,7 @@ namespace Studizie.Models
         public bool IsEntrepreneurship { get; set; }
         public bool IsGames { get; set; }
         public ICollection<ApplicationUserGroup> ApplicationUserGroups { get; set; }
+        public ICollection<Notification> Notifications { get; set; }
 
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
@@ -53,6 +54,7 @@ namespace Studizie.Models
         public DbSet<GroupType> GroupTypes { get; set; }
         public DbSet<EntryType> EntryTypes { get; set; }
         public DbSet<ApplicationUserGroup> ApplicationUserGroups { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
 
 

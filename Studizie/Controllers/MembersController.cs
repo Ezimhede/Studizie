@@ -8,6 +8,7 @@ using System.Data.Entity;
 using Studizie.ViewModels;
 using System.IO;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Studizie.Controllers
 {
@@ -28,8 +29,12 @@ namespace Studizie.Controllers
 
         // GET: Members
         [Authorize]
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(bool joinSuccess = false, bool? leaveSuccess = false)
         {
+            ViewBag.joinSuccess = joinSuccess; // display a success message when a user successfully joins a group
+            ViewBag.leaveSuccess = leaveSuccess;
+            ViewBag.alreadyJoined = false;
+
             var viewModel = new MembersViewModel()
             {
                 Users = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(User.Identity.Name)),
@@ -43,12 +48,12 @@ namespace Studizie.Controllers
 
         // Get all available groups based on member's interests
         [Authorize]
-        public ActionResult JsonIndex()
+        public async Task<ActionResult> JsonIndex()
         {
             var viewModel = new MembersViewModel()
             {
-                Users = _context.Users.FirstOrDefault(u => u.Email.Equals(User.Identity.Name)),
-                Groups = _context.Groups.Include(g => g.GroupTypes).Include(g => g.EntryTypes).Include(g => g.Interests).ToList()
+                Users = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(User.Identity.Name)),
+                Groups = await _context.Groups.Include(g => g.GroupTypes).Include(g => g.EntryTypes).Include(g => g.Interests).ToListAsync()
             };
 
             //_context.Configuration.ProxyCreationEnabled = false;
@@ -69,6 +74,40 @@ namespace Studizie.Controllers
             var userInDb = await _context.Users.Include(u => u.ApplicationUserGroups).SingleOrDefaultAsync(u => u.Id == viewModel.Users.Id);
             var groupInDb = await _context.Groups.SingleOrDefaultAsync(g => g.Id == groupId);
 
+            // Notify group creator when a new member joins their group
+            if (groupInDb.GroupTypesId == 1) // send join notification if it's an open group
+            {
+                var notification = new Notification()
+                {
+                    ApplicationUserId = groupInDb.ApplicationUserId,
+                    Date = DateTime.Now,
+                    Message = userInDb.FirstName + " " + userInDb.LastName + " joined " + groupInDb.Name,
+                    NotificationType = "Plain",
+                    MemberId = viewModel.Users.Id,
+                    GroupId = groupId
+                };
+
+                //Increase the number of members each time a user joins a group
+                groupInDb.NumberOfMembers++;
+
+                _context.Notifications.Add(notification);
+            }
+
+            if (groupInDb.GroupTypesId == 2) // send request notification if it's a close group
+            {
+                var notification = new Notification()
+                {
+                    ApplicationUserId = groupInDb.ApplicationUserId,
+                    Date = DateTime.Now,
+                    Message = userInDb.FirstName + " " + userInDb.LastName + " requested to join " + groupInDb.Name,
+                    NotificationType = "Request",
+                    MemberId = viewModel.Users.Id,
+                    GroupId = groupId
+                };
+
+                _context.Notifications.Add(notification);
+            }
+
             viewModel = new MembersViewModel()
             {
                 Users = await _context.Users.SingleOrDefaultAsync(u => u.Id == viewModel.Users.Id),
@@ -82,13 +121,14 @@ namespace Studizie.Controllers
             {
                 if ((item.ApplicationUserId == viewModel.Users.Id) && (item.GroupId == groupId))
                 {
-                    ViewBag.message = "You have already joined this group";
+                    ViewBag.alreadyJoined = true;
+                    ViewBag.joinSuccess = false;
+                    ViewBag.leaveSuccess = false;
 
                     return View("MembersHome", viewModel);
                 }
             }
-            //Increase the number of members each time a user joins a group
-            groupInDb.NumberOfMembers++;
+
 
             //create an instance of ApplicationUserGroup
             ApplicationUserGroup appUserGroup = new ApplicationUserGroup
@@ -97,23 +137,137 @@ namespace Studizie.Controllers
                 GroupId = groupId
             };
 
-            _context.ApplicationUserGroups.Add(appUserGroup);
+            // Save group if group type is "open"
+            if (groupInDb.GroupTypesId == 1)
+            {
+                _context.ApplicationUserGroups.Add(appUserGroup);
+            }
+
+            // Redirect to payment page for paid groups
+            if (groupInDb.EntryTypes.Name == "Paid")
+            {
+                return RedirectToAction("Payment", new { customerEmail = viewModel.Users.Email, firstName = viewModel.Users.FirstName, lastName = viewModel.Users.LastName });
+            }
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { joinSuccess = true});
+        }
+
+
+        public ActionResult Payment(string customerEmail, string firstName, string lastName)
+        {
+            ViewBag.customerEmail = customerEmail;
+            ViewBag.firstName = firstName;
+            ViewBag.lastName = lastName;
+
+            return View();
+        }
+
+
+        // Save groups that were accepted by group creator
+        [HttpPost]
+        public async Task<ActionResult> SaveAcceptedGroup(string Id, string memberId, int groupId, int notificationId)
+        {
+            //create an instance of ApplicationUserGroup
+            ApplicationUserGroup appUserGroup = new ApplicationUserGroup
+            {
+                ApplicationUserId = memberId,
+                GroupId = groupId
+            };
+
+            var groupInDb = await _context.Groups.SingleOrDefaultAsync(g => g.Id == groupId);
+
+            // Notify the user that sent the group request when the request is accepted
+            var notification = new Notification()
+            {
+                ApplicationUserId = memberId,
+                Date = DateTime.Now,
+                Message = "Your request to join " + groupInDb.Name + " was accepted",
+                NotificationType = "Plain",
+                MemberId = Id,
+                GroupId = groupId
+            };
+
+            // Delete the notification message after it has been accepted
+            var notifMessage = await _context.Notifications.Where(n => n.NotificationId == notificationId).SingleOrDefaultAsync();
+            _context.Notifications.Remove(notifMessage);
+
+            // Redirect user if user has already joined the group
+            //var userGroups = _context.ApplicationUserGroups.ToList();
+
+            //foreach (var item in userGroups)
+            //{
+            //    if ((item.ApplicationUserId == memberId) && (item.GroupId == groupId))
+            //    {
+            //        ViewBag.alreadyJoined = "You have already joined this group";
+
+            //        return View("MembersHome");
+            //    }
+            //}
+
+            //ViewBag.alreadyJoined = true;
+
+            //Increase the number of members each time a user joins a group
+            groupInDb.NumberOfMembers++;
+
+            _context.Notifications.Add(notification);
+
+            _context.ApplicationUserGroups.Add(appUserGroup);
+            await _context.SaveChangesAsync();
+
+            //return new JsonResult()
+            //{
+            //    Data = "data",
+            //    MaxJsonLength = 86753090,
+            //    JsonRequestBehavior = JsonRequestBehavior.AllowGet
+            //};
+
+            return RedirectToAction("Index", new { joinSuccess = false });
+        }
+
+
+        // Send notification when a group request is rejected
+        [HttpPost]
+        public async Task<ActionResult> RejectRequest(string Id, string memberId, int groupId, int notificationId)
+        {
+            
+            var groupInDb = await _context.Groups.SingleOrDefaultAsync(g => g.Id == groupId);
+
+            // Notify the user that sent the group request when the request is accepted
+            var notification = new Notification()
+            {
+                ApplicationUserId = memberId,
+                Date = DateTime.Now,
+                Message = "Your request to join " + groupInDb.Name + " was rejected",
+                NotificationType = "Plain",
+                MemberId = Id,
+                GroupId = groupId
+            };
+
+            // Delete the notification message after it has been accepted
+            var notifMessage = await _context.Notifications.Where(n => n.NotificationId == notificationId).SingleOrDefaultAsync();
+            _context.Notifications.Remove(notifMessage);
+
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", new { joinSuccess = false });
         }
 
         //GET members/joinedgroupslist/
         //Get the list of all the groups a member has joined
-        public ActionResult JoinedGroupsList(string Id)
+        public async Task<ActionResult> JoinedGroupsList(string Id, bool leaveSuccess = false, bool joinSuccess = false)
         {
             //var groups = _context.ApplicationUserGroups.Include(g => g.Group).Where(g => g.ApplicationUserId == Id).Select(g => g.Group).ToList();
 
+            ViewBag.leaveSuccess = leaveSuccess;
+            ViewBag.joinSuccess = joinSuccess;
+
             var viewModel = new MembersViewModel()
             {
-                Users = _context.Users.FirstOrDefault(u => u.Email.Equals(User.Identity.Name)),
-                Groups = _context.ApplicationUserGroups.Include(g => g.Group).Where(g => g.ApplicationUserId == Id).Select(g => g.Group).ToList()
+                Users = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(User.Identity.Name)),
+                Groups = await _context.ApplicationUserGroups.Include(g => g.Group).Where(g => g.ApplicationUserId == Id).Select(g => g.Group).ToListAsync()
             };
 
             return View("MembersHome", viewModel);
@@ -121,10 +275,10 @@ namespace Studizie.Controllers
 
 
         // GET list of groups a user joined, as JSON
-        public ActionResult JoinedGroups(string Id)
+        public async Task<ActionResult> JoinedGroups(string Id)
         {
             //_context.Configuration.ProxyCreationEnabled = false;
-            var groups = _context.ApplicationUserGroups.Include(g => g.Group).Where(g => g.ApplicationUserId == Id).Select(g => g.Group).ToList();
+            var groups = await _context.ApplicationUserGroups.Include(g => g.Group).Where(g => g.ApplicationUserId == Id).Select(g => g.Group).ToListAsync();
 
             //return Json(new { data = groups}, JsonRequestBehavior.AllowGet);
 
@@ -152,9 +306,9 @@ namespace Studizie.Controllers
         }
 
         // GET list of groups a user created
-        public ActionResult MyGroups(string Id)
+        public async Task<ActionResult> MyGroups(string Id)
         {
-            var groups = _context.Groups.Where(g => g.ApplicationUserId == Id).ToList();
+            var groups = await _context.Groups.Where(g => g.ApplicationUserId == Id).ToListAsync();
 
             return new JsonResult()
             {
@@ -167,7 +321,7 @@ namespace Studizie.Controllers
         // Return a group image
         public ActionResult RenderImage(int groupId)
         {
-            if(groupId == 0)
+            if (groupId == 0)
             {
                 return null;
             }
@@ -179,23 +333,33 @@ namespace Studizie.Controllers
 
                 return File(groupImage, "image/jpg");
             }
-            
+
         }
 
 
         //Leave a joined group
-        public ActionResult LeaveGroup(string Id, int groupId)
+        public async Task<ActionResult> LeaveGroup(string Id, int groupId)
         {
-            var groupInDb = _context.Groups.SingleOrDefault(g => g.Id == groupId);
-            var appUserGroup = _context.ApplicationUserGroups.Where(x => x.ApplicationUserId == Id && x.GroupId == groupId).SingleOrDefault();
-            
+            var groupInDb = await _context.Groups.SingleOrDefaultAsync(g => g.Id == groupId);
+            var appUserGroup = await _context.ApplicationUserGroups.Where(x => x.ApplicationUserId == Id && x.GroupId == groupId).SingleOrDefaultAsync();
+
             //Decrease the number of members each time a user leaves a group
             groupInDb.NumberOfMembers--;
 
-            _context.ApplicationUserGroups.Remove(appUserGroup);
-            _context.SaveChanges();
+            // Notify group creator when a member leaves their group
+            var notification = new Notification()
+            {
+                ApplicationUserId = groupInDb.ApplicationUserId,
+                Date = DateTime.Now,
+                Message = appUserGroup.ApplicationUser.FirstName + " " + appUserGroup.ApplicationUser.LastName + " left " + groupInDb.Name
+            };
 
-            return RedirectToAction("JoinedGroupsList", new { Id });
+            _context.ApplicationUserGroups.Remove(appUserGroup);
+            _context.Notifications.Add(notification);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("JoinedGroupsList", new { Id, leaveSuccess = true, joinSuccess = false });
         }
 
         //Delete a group a member created
@@ -211,36 +375,36 @@ namespace Studizie.Controllers
 
         //GET: members/creategroup
         [Authorize]
-        public ActionResult CreateGroup(string id)
+        public async Task<ActionResult> CreateGroup(string id)
         {
             var viewModel = new GroupsViewModel()
             {
                 Groups = new Group(),
-                Interests = _context.Interests.ToList(),
-                GroupTypes = _context.GroupTypes.ToList(),
-                EntryTypes = _context.EntryTypes.ToList()
+                Interests = await _context.Interests.ToListAsync(),
+                GroupTypes = await _context.GroupTypes.ToListAsync(),
+                EntryTypes = await _context.EntryTypes.ToListAsync()
             };
 
-            ViewBag.user = _context.Users.SingleOrDefault(m => m.Id == id);
+            ViewBag.user = await _context.Users.SingleOrDefaultAsync(m => m.Id == id);
 
             return View(viewModel);
         }
 
         //GET: members/editGroup
         // edit a group a member created
-        public ActionResult EditGroup(int id, string userId)
+        public async Task<ActionResult> EditGroup(int id, string userId)
         {
             var viewModel = new GroupsViewModel()
             {
-                Groups = _context.Groups.Include(g => g.ApplicationUser).SingleOrDefault(g => g.Id == id),
-                Interests = _context.Interests.ToList(),
-                GroupTypes = _context.GroupTypes.ToList(),
-                EntryTypes = _context.EntryTypes.ToList()
+                Groups = await _context.Groups.Include(g => g.ApplicationUser).SingleOrDefaultAsync(g => g.Id == id),
+                Interests = await _context.Interests.ToListAsync(),
+                GroupTypes = await _context.GroupTypes.ToListAsync(),
+                EntryTypes = await _context.EntryTypes.ToListAsync()
             };
 
-            ViewBag.user = _context.Users.SingleOrDefault(m => m.Id == userId);
+            ViewBag.user = await _context.Users.SingleOrDefaultAsync(m => m.Id == userId);
 
-            return View("CreateGroup",viewModel);
+            return View("CreateGroup", viewModel);
             //return new JsonResult()
             //{
             //    Data = viewModel,
@@ -254,7 +418,7 @@ namespace Studizie.Controllers
         // Save created or edited groups
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SaveGroup(GroupsViewModel group, HttpPostedFileBase File)
+        public async Task<ActionResult> SaveGroup(GroupsViewModel group, HttpPostedFileBase File)
         {
 
             if (!ModelState.IsValid)
@@ -262,12 +426,12 @@ namespace Studizie.Controllers
                 var viewModel = new GroupsViewModel()
                 {
                     Groups = group.Groups,
-                    Interests = _context.Interests.ToList(),
-                    GroupTypes = _context.GroupTypes.ToList(),
-                    EntryTypes = _context.EntryTypes.ToList()
+                    Interests = await _context.Interests.ToListAsync(),
+                    GroupTypes = await _context.GroupTypes.ToListAsync(),
+                    EntryTypes = await _context.EntryTypes.ToListAsync()
                 };
 
-                ViewBag.user = _context.Users.SingleOrDefault(m => m.Id == group.Groups.ApplicationUserId);
+                ViewBag.user = await _context.Users.SingleOrDefaultAsync(m => m.Id == group.Groups.ApplicationUserId);
 
                 return View("CreateGroup", viewModel);
             }
@@ -277,7 +441,7 @@ namespace Studizie.Controllers
                 group.Groups.DateCreated = DateTime.Now;
 
                 using (var binaryReader = new BinaryReader(File.InputStream)) //convert image to binary and save
-                group.Groups.GroupImage = binaryReader.ReadBytes(File.ContentLength);
+                    group.Groups.GroupImage = binaryReader.ReadBytes(File.ContentLength);
 
                 _context.Groups.Add(group.Groups);
             }
@@ -285,7 +449,7 @@ namespace Studizie.Controllers
             // For editing existing group
             else
             {
-                var groupInDb = _context.Groups.SingleOrDefault(g => g.Id == group.Groups.Id);
+                var groupInDb = await _context.Groups.SingleOrDefaultAsync(g => g.Id == group.Groups.Id);
 
                 if (File == null)
                     groupInDb.GroupImage = groupInDb.GroupImage;
@@ -306,9 +470,23 @@ namespace Studizie.Controllers
                 groupInDb.InterestsId = group.Groups.InterestsId;
             }
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
+        }
+
+        // Get all the notifications for the logged in members
+        public async Task<ActionResult> GetNotifications(string id)
+        {
+            var notificationsInDb = await _context.Notifications.Where(n => n.ApplicationUserId == id).ToListAsync();
+            notificationsInDb.Select(n => n.Date);
+
+            return new JsonResult()
+            {
+                Data = notificationsInDb,
+                MaxJsonLength = 86753090,
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet
+            };
         }
 
     }

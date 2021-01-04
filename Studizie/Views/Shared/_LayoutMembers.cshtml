@@ -25,8 +25,8 @@
 
             <div class="navbar-collapse collapse" id="navbarToggler">
                 <ul class="navbar-nav navbar-right">
-                    <li class="nav-item">@Html.ActionLink("Create Group", "CreateGroup", "Members", routeValues: new { id = @User.Identity.GetUserId()}, htmlAttributes: new { @class = "nav-link" })</li>
-                    <li class="nav-item"><span class="fas fa-bell nav-link"></span></li>
+                    <li class="nav-item createGroup">@Html.ActionLink("Create Group", "CreateGroup", "Members", routeValues: new { id = @User.Identity.GetUserId() }, htmlAttributes: new { @class = "nav-link" })</li>
+                    <li class="nav-item" data-toggle="modal" data-target="#notificationModal"><span class="fas fa-bell nav-link"><i class="fas fa-circle" hidden></i></span></li>
                     <li class="nav-item"><img src="~/Content/Images/Avatar.png" alt="avatar" width="48" class="nav-link" /></li>
                     <li class="nav-item">@Html.ActionLink("Sign Out", "Login", "Account", routeValues: null, htmlAttributes: new { @class = "nav-link" })</li>
                 </ul>
@@ -34,26 +34,44 @@
         </div>
     </div>
 
-    @*<div class="tabs container mt-4">
-        <nav class="nav nav-pills nav-fill">
-            @Html.ActionLink("All Groups", "Index", "Members", null, htmlAttributes: new { @class = "nav-item nav-link"})
-            @Html.ActionLink("Joined Groups", "JoinedGroups", "Members", new { id = User.Identity.GetUserId() }, htmlAttributes: new { @class = "nav-item nav-link", onclick = "Active()" })
-            <a class="nav-item nav-link" href="#">My Groups</a>
-        </nav>
-          
+    @*Modal to display notifications*@
+    <div class="modal fade notificationModal" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
 
-        <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="/members" role="tab" aria-controls="pills-home" aria-selected="true">All Groups</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="/members/joinedgroups/@User.Identity.GetUserId()" role="tab" aria-controls="pills-profile" aria-selected="false">Joined Groups</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">My Groups</a>
-            </li>
-        </ul>
-    </div>*@
+                <div class="modal-header">
+                    <h3 class="text-center">Your Notifications</h3>
+                </div>
+
+                <div class="modal-body">
+                    <div class="notifs">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    @*<div class="tabs container mt-4">
+            <nav class="nav nav-pills nav-fill">
+                @Html.ActionLink("All Groups", "Index", "Members", null, htmlAttributes: new { @class = "nav-item nav-link"})
+                @Html.ActionLink("Joined Groups", "JoinedGroups", "Members", new { id = User.Identity.GetUserId() }, htmlAttributes: new { @class = "nav-item nav-link", onclick = "Active()" })
+                <a class="nav-item nav-link" href="#">My Groups</a>
+            </nav>
+
+
+            <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="/members" role="tab" aria-controls="pills-home" aria-selected="true">All Groups</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="/members/joinedgroups/@User.Identity.GetUserId()" role="tab" aria-controls="pills-profile" aria-selected="false">Joined Groups</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">My Groups</a>
+                </li>
+            </ul>
+        </div>*@
 
     @RenderBody()
 
@@ -71,7 +89,7 @@
 
     @section scripts {
         <script>
-
+            
         </script>
     }
 </body>
